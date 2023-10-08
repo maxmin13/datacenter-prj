@@ -1,0 +1,8 @@
+
+__pycache__
+.pytest_cache
+.project
+.pydevproject
+.settings
+.dbeaver
+.venv
