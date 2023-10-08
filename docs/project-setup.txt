@@ -5,7 +5,7 @@ ssh-keygen -t rsa -b 4096 -C "minardi.massimiliano@libero.it"
 
 clone the project:
 
-git clone git@github.com:maxmin13/anspython -m pip freeze > requirements.txtible-prj.git
+git clone git@github.com:maxmin13/datacenter-prj.git
 
 ###################################
 # configure the project in eclipse
@@ -27,12 +27,12 @@ In the Source Folders tab, use "Add source folder" to add folders that need to b
 # create a virtual environment with python 3.11:
 #################################################
 
-cd ansible-prj
+cd datacenter-prj
 
 python -m venv ".venv"
 source .venv/bin/activate
 
-# Software required to run the program:
+# Software required:
 
 python -m pip install ansible~=8.2.0
 python -m pip install botocore~=1.31.0
@@ -57,7 +57,7 @@ Go to PyDev/Interpreter - Python
 Click "New..."
 For the Executable, enter:
 
-/home/vagrant/workspace/ansible-prj/.venv/bin/python
+/home/vagrant/workspace/datacenter-prj/.venv/bin/python
 
 Choose another name for your interpreter if you want, probably something shorter than the default.  
 I like to use the name of the virtual environment, with "-env" appended.
@@ -80,7 +80,7 @@ Click OK
 ###################################
 
 edit: constants.py
-set PROJECT_DIR=path to the ansible-prj directory
+set PROJECT_DIR=path to the datacenter-prj directory
 
 ###################################
 # Run the tests:
@@ -112,12 +112,12 @@ aws configure
 ###################################
 
 # create aws datacenter
-cd ansible-prj/bin
+cd datacenter-prj/bin
 
 ./make.sh
 
 # delete aws datacenter
-cd ansible-prj/bin
+cd datacenter-prj/bin
 
 ./make.sh
 
@@ -125,7 +125,7 @@ cd ansible-prj/bin
 # Provision the instances:
 ###################################
 
-edit ansible-prj/provision/playbooks/constants/controller.yml
+edit datacenter-prj/provision/playbooks/constants/controller.yml
 
 set controller.project.path variable
 
