@@ -46,7 +46,7 @@ class Route53Constants(ApplicationConstants):
 
 
 class ProjectDirectories:
-    PROJECT_DIR = "/home/vagrant/workspace/ansible-prj"
+    PROJECT_DIR = "/home/vagrant/workspace/datacenter-prj"
     ACCESS_DIR = f"{PROJECT_DIR}/access"
     CONFIG_DIR = f"{PROJECT_DIR}/config"
     TEMPLATES_DIR = f"{PROJECT_DIR}/templates"

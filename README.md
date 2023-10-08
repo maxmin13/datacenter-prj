@@ -18,12 +18,12 @@ aws configure
 
 **Clone the project:**
 
-git clone git@github.com:maxmin13/ansible-prj.git
+git clone git@github.com:maxmin13/datacenter-prj.git
 
 **Configure the project:**
 
 edit: constants.py
-set PROJECT_DIR=<path to the ansible-prj directory>
+set PROJECT_DIR=<path to the datacenter-prj directory>
 
 **Create the AWS datacenter with instances, subnets, security groups and DNS records:**
 
@@ -36,7 +36,7 @@ cd bin
 **Create a virtual environment with python version 3.11:**
 
 ```
-cd ansible-prj
+cd datacenter-prj
 python3 -m venv ".venv"
 source .venv/bin/activate
 pip install -r requirements.txt

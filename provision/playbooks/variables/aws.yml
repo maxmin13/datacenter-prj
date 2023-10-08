@@ -9,7 +9,7 @@ aws:
       user: "awsadmin"
       ssh:
         key:
-          path: /home/vagrant/workspace/ansible-prj/access/admin-key
+          path: /home/vagrant/workspace/datacenter-prj/access/admin-key
       dns:
         domain: admin.maxmin.it
     python:
