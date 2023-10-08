@@ -1,0 +1,18 @@
+pip freeze > requirements.txt
+
+find . -type f -name "*.sh" -exec sed -i 's/secretsmanager.sh/secretsmanager_auth.sh/g' {} \;
+
+find . -type f -name *.sh -exec chmod 644 -- {} +
+
+find . -type d -name .pytest_cache -exec rm -rf -- {} +
+
+find . -name ".*" -exec echo  -- {} +
+
+grep -R  "controller.project.path"
+
+find . -name ".pytest_cache" -exec rm -rf -- {} +
+find . -name "__pycache__" -exec rm -rf -- {} +
+
+find ./ -type f -name "*.yml" -exec sed -i 's/aws.instance.download_dir/aws.instance.download.dir/g' {} \;
+
+make test TESTS='test_ca test_ssl_new' V=1

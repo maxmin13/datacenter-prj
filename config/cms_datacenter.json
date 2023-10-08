@@ -1,0 +1,108 @@
+{
+  "Datacenter": {
+    "Description": "AWS VPC for CMS application",
+    "Name": "cms-datacenter",
+    "Cidr": "10.0.0.0/16",
+    "DnsName": "10.0.0.2",
+    "Region": "eu-west-1",
+    "InternetGateway": "cms-gateway",
+    "RouteTable": "cms-routetable",
+    "Subnets": [
+      {
+        "Description": " AWS network shared by the instances.",
+        "Name": "admin-subnet",
+        "Az": "eu-west-1a",
+        "Cidr": "10.0.20.0/24"
+      }
+    ],
+    "SecurityGroups": [
+      {
+        "Description": "Admin instance security group.",
+        "Name": "admin-sgp",
+        "Rules": [
+          {
+            "FromPort": -1,
+            "ToPort": -1,
+            "Protocol": "icmp",
+            "Cidr": "0.0.0.0/0",
+            "Description": "ping access"
+          },
+          {
+            "FromPort": 22,
+            "ToPort": 22,
+            "Protocol": "tcp",
+            "Cidr": "0.0.0.0/0",
+            "Description": "ssh access"
+          },
+          {
+            "FromPort": 8080,
+            "ToPort": 8080,
+            "Protocol": "tcp",
+            "Cidr": "0.0.0.0/0",
+            "Description": "http access"
+          },
+          {
+            "FromPort": 8443,
+            "ToPort": 8443,
+            "Protocol": "tcp",
+            "Cidr": "0.0.0.0/0",
+            "Description": "https access"
+          },
+          {
+            "FromPort": 5432,
+            "ToPort": 5432,
+            "Protocol": "tcp",
+            "Cidr": "0.0.0.0/0",
+            "Description": "postgresql access"
+          },
+          {
+            "FromPort": 8000,
+            "ToPort": 8000,
+            "Protocol": "tcp",
+            "Cidr": "0.0.0.0/0",
+            "Description": "gunicorn access"
+          }
+        ]
+      }
+    ],
+    "Instances": [
+      {
+        "UserName": "awsadmin",
+        "UserPassword": "awsadmin",
+        "PrivateIp": "10.0.20.35",
+        "DnsName": "admin.maxmin.it",
+        "Hostname": "admin.maxmin.it",
+        "SecurityGroup": "admin-sgp",
+        "Subnet": "admin-subnet",
+        "Keypair": "admin-key",
+        "ParentImage": "amzn2-ami-kernel-5.10-hvm-2.0.20230719.0-x86_64-gp2",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "admin-box"
+          },
+          {
+            "Key": "Class",
+            "Value": "cms"
+          },
+          {
+            "Key": "Database",
+            "Value": "postgresql"
+          },
+          {
+            "Key": "Program",
+            "Value": "python"
+          },
+          {
+            "Key": "Security",
+            "Value": "openssl"
+          },
+          {
+            "Key": "Webserver",
+            "Value": "nginx"
+          }
+        ]
+      }
+    ]
+  }
+}

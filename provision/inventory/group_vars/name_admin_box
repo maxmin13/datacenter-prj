@@ -1,0 +1,6 @@
+
+instance_dns_domain: "{{ aws.instance.admin.dns.domain }}"
+
+ansible_ssh_private_key_file: "{{ aws.instance.admin.ssh.key.path }}"
+ansible_user: "{{ aws.instance.admin.user }}"
+

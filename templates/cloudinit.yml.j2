@@ -1,0 +1,25 @@
+#cloud-config
+
+users:
+  - name: {{ username }}
+    gecos: Aws user
+    passwd: {{ hashed_password }}
+    lock_passwd: false
+    sudo: ALL=(ALL) PASSWD:ALL
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - {{ public_key }}
+
+hostname: {{ hostname }}
+
+package_upgrade: true
+package_update: true
+packages:
+  - git
+    
+runcmd:
+ - [ sh, -c, "amazon-linux-extras install epel -y"]
+ - [ sh, -c, "amazon-linux-extras install -y ansible2" ]
+
+ 
+ 

@@ -1,0 +1,20 @@
+plugin: aws_ec2
+regions:
+  - eu-west-1
+keyed_groups:
+  - key: tags.Name
+    prefix: name
+  - key: tags.Class
+    prefix: class
+  - key: tags.Database
+    prefix: database 
+  - key: tags.Security
+    prefix: security
+  - key: tags.Program
+    prefix: program 
+  - key: tags.Webserver
+    prefix: webserver            
+filters:
+  instance-state-name: running
+compose:
+  ansible_host: public_ip_address

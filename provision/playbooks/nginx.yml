@@ -1,0 +1,101 @@
+- name: Configure a webserver with nginx
+  hosts:
+    - webserver_nginx
+    
+  gather_facts: true
+  
+  vars_files:
+    - variables/vars.yml
+    - variables/aws.yml
+    
+  handlers:
+    - name: 'Restart nginx'
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+        
+  pre_tasks:
+      
+    - name: 'Remote host'
+      ansible.builtin.debug:
+        msg: 
+        - "os_family: {{ ansible_facts.os_family }}"
+        - "distro: {{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }}"
+        - "kernel: {{ ansible_facts.kernel }}"      
+
+    - name: 'Controller host configuration'
+      ansible.builtin.debug:
+        msg:
+        - "domain: {{ instance_dns_domain }}"
+        - "ssh port: {{ ansible_port }}"
+        - "ssh user: {{ ansible_user }}"
+        - "ssh key: {{ ansible_private_key_file }}"
+
+    - name: Upgrade all packages
+      ansible.builtin.yum: name=* state=latest  
+             
+  tasks:
+                     
+    - name: Ensure nginx is installed
+      ansible.builtin.package:
+        name: nginx
+        update_cache: true       
+      
+    - name: Create directories for nginx TLS certificates
+      ansible.builtin.file:
+        path: "{{ aws.instance.nginx.tls.dir.path }}"
+        state: directory
+        mode: 488
+      
+    - name: Create nginx tls certificates
+      become: true
+      ansible.builtin.command: >
+        openssl req -new -x509 -nodes -out {{ aws.instance.nginx.cert.file }}
+        -keyout {{ aws.instance.nginx.key.file }} -subj '/CN={{ instance_dns_domain }}' -days 365
+      args:
+        chdir: "{{ aws.instance.nginx.tls.dir.path }}"    
+      
+    - name: Remove the default nginx config file
+      become: true
+      ansible.builtin.file:
+        path: "{{ aws.instance.nginx.install.dir.path }}/nginx.conf"
+        state: absent
+
+    - name: Deploy nginx config file
+      ansible.builtin.template:
+        src: nginx/nginx.conf.j2
+        dest: "{{ aws.instance.nginx.install.dir.path }}/nginx.conf"
+        mode: 436
+      notify: Restart nginx  
+
+    - name: index.html file
+      ansible.builtin.template:
+        src: nginx/index.html.j2
+        dest: "{{ aws.instance.nginx.root.dir.path }}/index.html"
+        mode: 436
+        
+    - name: Restart nginx
+      meta: flush_handlers
+      
+    - name: 'Test it! http://{{ instance_dns_domain }}:{{ aws.instance.nginx.http.port }}/index.html'
+      become: false
+      ansible.builtin.uri:
+        url: 'http://{{ instance_dns_domain }}:{{ aws.instance.nginx.http.port }}/index.html'
+        method: GET
+        status_code: 200
+        return_content: true
+      register: result
+      failed_when: "'Running on ' not in result.content"
+      
+    - name: 'Test it! https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
+      become: false
+      ansible.builtin.uri:
+        url: 'https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
+        method: GET
+        status_code: 200
+        validate_certs: false
+        return_content: true
+      register: result
+      failed_when: "'Running on ' not in result.content"   
+...
+      

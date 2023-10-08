@@ -1,0 +1,108 @@
+- name: Install Openssl
+  hosts:
+    - all
+
+  gather_facts: false
+  vars_files:
+    - variables/vars.yml
+    - variables/aws.yml
+ 
+  pre_tasks:
+      
+    - name: 'Controller host configuration'
+      ansible.builtin.debug:
+        msg:
+        - "domain: {{ instance_dns_domain }}"
+        - "ssh port: {{ ansible_port }}"
+        - "ssh user: {{ ansible_user }}"
+        - "ssh key: {{ ansible_private_key_file }}"
+        
+    - name: Upgrade all packages
+      ansible.builtin.yum: name=* state=latest 
+      vars: 
+        ansible_python_interpreter: /usr/bin/python2         
+           
+    - name: Install packages 
+      ansible.builtin.yum:
+        name:
+          - gcc 
+          - perl-core 
+      vars: 
+        ansible_python_interpreter: /usr/bin/python2  
+          
+    - name: Create download directory
+      ansible.builtin.file:
+        path: "{{ aws.instance.download.dir.path }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 488         
+ 
+  tasks:
+  
+    - name: Download openssl
+      ansible.builtin.get_url:
+        url: "{{ aws.instance.openssl.download.url }}"
+        dest: "{{ aws.instance.download.dir.path }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}" 
+        
+    - name: Unarchive openssl
+      ansible.builtin.unarchive:
+        src: "{{ aws.instance.download.dir.path }}/{{ aws.instance.openssl.archive.name }}"
+        dest: "{{ aws.instance.download.dir.path }}"
+        remote_src: true
+      
+    - name: Initialize openssl
+      ansible.builtin.shell: "cd {{ aws.instance.download.dir.path }}/{{ aws.instance.openssl.archive.directory }} && ./config --prefix={{ aws.instance.openssl.install.dir.path }} --openssldir={{ aws.instance.openssl.install.dir.path }}"
+      
+    - name: Build openssl
+      ansible.builtin.shell: "cd {{ aws.instance.download.dir.path }}/{{ aws.instance.openssl.archive.directory }} && make clean && make depend && make"
+      
+    - name: Test openssl
+      ansible.builtin.shell: "cd {{ aws.instance.download.dir.path }}/{{ aws.instance.openssl.archive.directory }} && make test"  
+      
+    - name: Install openssl
+      ansible.builtin.shell: "cd {{ aws.instance.download.dir.path }}/{{ aws.instance.openssl.archive.directory }} && make install"   
+      
+    - name: Configure openssl
+      ansible.builtin.shell: "sh -c 'echo /opt/openssl/lib/' > /etc/ld.so.conf.d/openssl-1.1.1t.conf"
+       
+    - name: Run ldconfig
+      ansible.builtin.shell: "ldconfig" 
+      
+    - name: Remove openssl link
+      ansible.builtin.file:
+        path: /usr/bin/openssl
+        state: absent              
+             
+    - name: Create openssl link
+      ansible.builtin.file:
+        src: "{{ aws.instance.openssl.install.dir.path }}/bin/openssl"
+        dest: /usr/bin/openssl
+        owner: root
+        group: root
+        mode: '0755'
+        state: link        
+        
+    - name: Edit PATH
+      ansible.builtin.lineinfile:
+        path: /home/{{ ansible_user }}/.bash_profile
+        insertbefore: '^export PATH'
+        line: "PATH=$PATH:{{ aws.instance.openssl.install.dir.path }}/bin"
+        state: present        
+        
+    - name: Openssl version
+      ansible.builtin.shell: "source /home/{{ ansible_user }}/.bash_profile && openssl version"    
+      register: openssl_ver
+                
+    - ansible.builtin.assert: 
+        that: 
+          - "'{{ aws.instance.openssl.version }}' in '{{ openssl_ver.stdout }}'"
+              
+  post_tasks:
+  
+    - name: Delete download directory
+      ansible.builtin.file:
+        path: "{{ aws.instance.download.dir.path }}"
+        state: absent                 

@@ -1,0 +1,42 @@
+
+
+systemctl status postgresql
+
+#### connect to the database
+
+sudo su postgres
+cd ~postgres
+psql -U postgres -d postgresdb
+
+#### print all available commands:
+
+\h
+
+#### check all currently active users:
+
+\du
+
+#### exit PostgreSQL command line utility:	
+
+\q
+
+####
+#### create a database
+#### PostgreSQL assumes that the role name should be the same as the database name.
+
+sudo -u postgres createdb postgresadmin
+
+#### To log in to the newly created database, 
+####you need to make a Linux user account under the same name:
+
+sudo adduser postgresadmin
+
+#### connect to the database:
+
+sudo --login --user=postgres psql
+
+ \l
+ \c
+ \conninfo
+ 
+

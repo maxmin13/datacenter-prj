@@ -1,0 +1,54 @@
+---
+
+aws:
+  instance: 
+    download:
+      dir:
+        path: /opt/download  
+    admin:
+      user: "awsadmin"
+      ssh:
+        key:
+          path: /home/vagrant/workspace/ansible-prj/access/admin-key
+      dns:
+        domain: admin.maxmin.it
+    python:
+      download:
+        url: "https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tar.xz"
+      install:
+        dir:
+          path: /usr/local/bin
+      executable: "{{ python_executable }}"
+      version: "{{ python_version }}"
+      archive:
+        directory: "Python-{{ python_version }}"
+        name: "Python-{{ python_version }}.tar.xz"        
+    openssl:
+      download:
+        url: "https://ftp.openssl.org/source/openssl-{{ openssl_version }}.tar.gz"
+      install:
+        dir:
+          path: /opt/openssl
+      version: "{{ openssl_version }}"
+      archive:
+        directory: "openssl-{{ openssl_version }}"
+        name: "openssl-{{ openssl_version }}.tar.gz"      
+    nginx:
+      install:
+         dir:
+           path: "/etc/nginx"
+      tls:
+        dir:
+          path: "/etc/nginx/ssl/"
+      key:
+        file: "nginx.key"
+      cert:
+        file: "nginx.crt"
+      root:
+        dir:
+          path: "/usr/share/nginx/html"
+      http:
+        port: "8080"
+      https:
+        port: "8443"               
+...
