@@ -1,4 +1,4 @@
-# AWS Ansible project
+# AWS datacenter project
 
 The project creates a datacenter in the AWS cloud.</br>
 Python is used to create the the AWS objects (VPC, subnets, security groups, instances and DNS records, see src/ folder),</br>
