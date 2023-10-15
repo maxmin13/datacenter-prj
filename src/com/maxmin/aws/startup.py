@@ -1,7 +1,10 @@
 import sys
 
-from com.maxmin.aws.configuration import ApplicationConfig, CidrRuleConfig
-from com.maxmin.aws.constants import ProjectFiles, Route53Constants
+from com.maxmin.aws.configuration import (
+    DatacenterConfig,
+    CidrRuleConfig,
+    HostedZoneConfig,
+)
 from com.maxmin.aws.ec2.dao import internet_gateway, instance
 from com.maxmin.aws.ec2.dao.instance import Instance
 from com.maxmin.aws.ec2.dao.internet_gateway import InternetGateway
@@ -22,12 +25,8 @@ from com.maxmin.aws.route53.dao.record import Record
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        application_config = ApplicationConfig(
-            ProjectFiles.DEFAULT_CONFIG_FILE
-        )
-    else:
-        application_config = ApplicationConfig(sys.argv[1])
+    datacenter_config = DatacenterConfig(sys.argv[1])
+    hostedzone_config = HostedZoneConfig(sys.argv[2])
 
     Logger.info("Creating datacenter ...")
 
@@ -35,10 +34,10 @@ if __name__ == "__main__":
     # Create the vpc
     #
 
-    vpc = Vpc(application_config.vpc.name)
+    vpc = Vpc(datacenter_config.vpc.name)
 
     if vpc.load() is False:
-        vpc.create(application_config.vpc.cidr)
+        vpc.create(datacenter_config.vpc.cidr)
 
         Logger.info("Vpc created!")
     else:
@@ -50,7 +49,7 @@ if __name__ == "__main__":
     # Create the Internet gateway
     #
 
-    internet_gateway = InternetGateway(application_config.internet_gateway)
+    internet_gateway = InternetGateway(datacenter_config.internet_gateway)
 
     if internet_gateway.load() is False:
         internet_gateway.create()
@@ -72,7 +71,7 @@ if __name__ == "__main__":
     # Create the route table
     #
 
-    route_table = RouteTable(application_config.route_table)
+    route_table = RouteTable(datacenter_config.route_table)
 
     if route_table.load() is False:
         route_table.create(vpc.id)
@@ -94,7 +93,7 @@ if __name__ == "__main__":
     # Create the subnet
     #
 
-    for subnet_config in application_config.subnets:
+    for subnet_config in datacenter_config.subnets:
         subnet = Subnet(subnet_config.name)
 
         if subnet.load() is False:
@@ -110,7 +109,7 @@ if __name__ == "__main__":
     # Create the security group
     #
 
-    for security_group_config in application_config.security_groups:
+    for security_group_config in datacenter_config.security_groups:
         security_group = SecurityGroup(security_group_config.name)
 
         if security_group.load() is False:
@@ -177,7 +176,7 @@ if __name__ == "__main__":
     # Create the instances and AMIs.
     #
 
-    for instance_config in application_config.instances:
+    for instance_config in datacenter_config.instances:
         keypair = Keypair(instance_config.keypair)
 
         if keypair.load() is False:
@@ -195,6 +194,10 @@ if __name__ == "__main__":
         if instance.state == "terminated":
             raise AwsException("The instance is terminated.")
 
+        host_name = (
+            instance_config.name + "." + hostedzone_config.registered_domain
+        )
+
         instance_service = InstanceService()
         instance_service.create_instance(
             instance_config.parent_img,
@@ -202,18 +205,21 @@ if __name__ == "__main__":
             instance_config.subnet,
             instance_config.keypair,
             instance_config.private_ip,
-            instance_config.hostname,
+            host_name,
             instance_config.username,
             instance_config.password,
             instance_config.tags,
         )
 
         instance.load()
+        
+        dns_name = (
+            instance_config.name + "." + hostedzone_config.registered_domain
+        )
 
-        route53Constants = Route53Constants()
-        hosted_zone = HostedZone(route53Constants.registered_domain)
+        hosted_zone = HostedZone(hostedzone_config.registered_domain)
         hosted_zone.load()
-        record = Record(instance_config.dns_name, hosted_zone.id)
+        record = Record(dns_name, hosted_zone.id)
 
         Logger.info("Creating DNS record ...")
 
@@ -223,20 +229,5 @@ if __name__ == "__main__":
             Logger.info("DNS record created!")
         else:
             Logger.warn("DNS record already created!")
-
-        # TODO TODO
-        # persist the instance into an AMI
-        # if instance_config.target_img is not None:
-        #    target_image = Image(instance_config.target_img)
-
-        #    if target_image.load() is False:
-        #        Logger.info("Creating target image ...")
-
-        #       instance.stop()
-        #        target_image.create(instance.id, target_image.name)
-
-        #        Logger.info("Target image created!")
-        #    else:
-        #        Logger.warn("Target image not found!")
 
     Logger.info("Datacenter created!")

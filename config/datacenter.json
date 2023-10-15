@@ -67,11 +67,10 @@
     ],
     "Instances": [
       {
+        "Name": "admin",
         "UserName": "awsadmin",
         "UserPassword": "awsadmin",
         "PrivateIp": "10.0.20.35",
-        "DnsName": "admin.maxmin.it",
-        "Hostname": "admin.maxmin.it",
         "SecurityGroup": "admin-sgp",
         "Subnet": "admin-subnet",
         "Keypair": "admin-key",

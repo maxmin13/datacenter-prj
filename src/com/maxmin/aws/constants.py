@@ -6,7 +6,7 @@ Created on Mar 28, 2023
 import configparser
 
 
-class ApplicationConstants(object):
+class IniFileConstants(object):
     """
     Loads ini files into a configuration object.
     """
@@ -16,7 +16,7 @@ class ApplicationConstants(object):
         self.config.read(ini_file)
 
 
-class Ec2Constants(ApplicationConstants):
+class Ec2Constants(IniFileConstants):
     """
     Loads the ec2.ini file
     """
@@ -32,19 +32,6 @@ class Ec2Constants(ApplicationConstants):
         self.tenancy = instance["tenancy"]
 
 
-class Route53Constants(ApplicationConstants):
-    """
-    Loads the route53.ini file
-    """
-
-    def __init__(self):
-        super().__init__(ProjectFiles.ROUTE53_CONSTANTS_FILE)
-
-        instance = self.config["DNS_DOMAIN"]
-
-        self.registered_domain = instance["registered_domain"]
-
-
 class ProjectDirectories:
     PROJECT_DIR = "/home/vagrant/workspace/datacenter-prj"
     ACCESS_DIR = f"{PROJECT_DIR}/access"
@@ -54,8 +41,4 @@ class ProjectDirectories:
 
 class ProjectFiles:
     EC2_CONSTANTS_FILE = f"{ProjectDirectories.CONFIG_DIR}/ec2.ini"
-    ROUTE53_CONSTANTS_FILE = f"{ProjectDirectories.CONFIG_DIR}/route53.ini"
-    DEFAULT_CONFIG_FILE = (
-        f"{ProjectDirectories.CONFIG_DIR}/cms_datacenter.json"
-    )
     CLOUDINIT_TEMPLATE = f"{ProjectDirectories.TEMPLATES_DIR}/cloudinit.yml.j2"

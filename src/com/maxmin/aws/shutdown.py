@@ -1,7 +1,6 @@
 import sys
 
-from com.maxmin.aws.configuration import ApplicationConfig
-from com.maxmin.aws.constants import ProjectFiles, Route53Constants
+from com.maxmin.aws.configuration import DatacenterConfig, HostedZoneConfig
 from com.maxmin.aws.ec2.dao import internet_gateway
 from com.maxmin.aws.ec2.dao.image import Image
 from com.maxmin.aws.ec2.dao.instance import Instance
@@ -16,16 +15,12 @@ from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
 from com.maxmin.aws.route53.dao.record import Record
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        application_config = ApplicationConfig(
-            ProjectFiles.DEFAULT_CONFIG_FILE
-        )
-    else:
-        application_config = ApplicationConfig(sys.argv[1])
+    datacenter_config = DatacenterConfig(sys.argv[1])
+    hostedzone_config = HostedZoneConfig(sys.argv[2])
 
     Logger.info("Deleting datacenter ...")
 
-    vpc = Vpc(application_config.vpc.name)
+    vpc = Vpc(datacenter_config.vpc.name)
     vpc_found = vpc.load()
 
     if vpc_found is False:
@@ -35,15 +30,21 @@ if __name__ == "__main__":
     # Delete the instances
     #
 
-    route53Constants = Route53Constants()
-    hosted_zone = HostedZone(route53Constants.registered_domain)
+    hosted_zone = HostedZone(hostedzone_config.registered_domain)
     hosted_zone.load()
 
-    for instance_config in application_config.instances:
+    for instance_config in datacenter_config.instances:
         instance = Instance(instance_config.tags)
 
         found_instance = instance.load()
-        record = Record(instance_config.dns_name, hosted_zone.id)
+        
+        dns_name = (
+            instance_config.name + "." + hostedzone_config.registered_domain
+        )
+
+        hosted_zone = HostedZone(hostedzone_config.registered_domain)
+        hosted_zone.load()
+        record = Record(dns_name, hosted_zone.id)
 
         Logger.info("Deleting DNS record ...")
 
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     # Delete the security groups
     #
 
-    for security_group_config in application_config.security_groups:
+    for security_group_config in datacenter_config.security_groups:
         security_group = SecurityGroup(security_group_config.name)
 
         if security_group.load() is True:
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     # Delete the internet gateway
     #
 
-    internet_gateway = InternetGateway(application_config.internet_gateway)
+    internet_gateway = InternetGateway(datacenter_config.internet_gateway)
 
     if internet_gateway.load() is True:
         if internet_gateway.is_attached_to(vpc.id):
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     # Delete the subnets
     #
 
-    for subnet_config in application_config.subnets:
+    for subnet_config in datacenter_config.subnets:
         subnet = Subnet(subnet_config.name)
 
         if subnet.load() is True:
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     # Delete the route table
     #
 
-    route_table = RouteTable(application_config.route_table)
+    route_table = RouteTable(datacenter_config.route_table)
 
     if route_table.load() is True:
         route_table.delete()
@@ -143,7 +144,7 @@ if __name__ == "__main__":
     # Delete the vpc
     #
 
-    vpc = Vpc(application_config.vpc.name)
+    vpc = Vpc(datacenter_config.vpc.name)
     vpc_found = vpc.load()
 
     if vpc_found is True:

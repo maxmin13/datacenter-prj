@@ -1,0 +1,6 @@
+{
+  "HostedZone": {
+    "Description": "Route 53 hosted zone",
+    "RegisteredDomain": "maxmin.it"
+  }
+}

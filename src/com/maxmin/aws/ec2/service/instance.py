@@ -59,10 +59,10 @@ class InstanceService(object):
             )
 
             parent_image = Image(parent_image_nm)
-            
+
             if parent_image.load() is False:
                 raise AwsException("Error loading image!")
-                
+
             security_group = SecurityGroup(security_group_nm)
             security_group.load()
             subnet = Subnet(subnet_nm)

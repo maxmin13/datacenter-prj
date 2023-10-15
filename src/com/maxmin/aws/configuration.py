@@ -10,7 +10,31 @@ from pathlib import Path
 from com.maxmin.aws.exception import AwsException
 
 
-class ApplicationConfig(object):
+class HostedZoneConfig(object):
+    """
+    Loads a Json file into a configuration object.
+    """
+
+    def __init__(self, config_file):
+        self.description = None
+        self.registered_domain = None
+
+        try:
+            config_file_path = Path(config_file)
+            content = config_file_path.read_text("UTF8")
+        except FileNotFoundError:
+            raise AwsException("Error reading configuration file!")
+
+        try:
+            self._hosted_zone = json.loads(content).get("HostedZone")
+        except JSONDecodeError:
+            raise AwsException("Invalid Json file!")
+
+        self.description = self._hosted_zone.get("Description")
+        self.registered_domain = self._hosted_zone.get("RegisteredDomain")
+
+
+class DatacenterConfig(object):
     """
     Loads a Json file into a configuration object.
     """
@@ -89,11 +113,10 @@ class ApplicationConfig(object):
         for instance in self._datacenter.get("Instances"):
             self.instances.append(
                 InstanceConfig(
+                    instance.get("Name"),
                     instance.get("UserName"),
                     instance.get("UserPassword"),
                     instance.get("PrivateIp"),
-                    instance.get("DnsName"),
-                    instance.get("Hostname"),
                     instance.get("SecurityGroup"),
                     instance.get("Subnet"),
                     instance.get("Keypair"),
@@ -170,11 +193,10 @@ class SgpRuleConfig(object):
 class InstanceConfig(object):
     def __init__(
         self,
+        name,
         username,
         password,
         private_ip,
-        dns_name,
-        hostname,
         security_group,
         subnet,
         keypair,
@@ -182,11 +204,10 @@ class InstanceConfig(object):
         target_img,
         tags,
     ):
+        self.name = name
         self.username = username
         self.password = password
         self.private_ip = private_ip
-        self.dns_name = dns_name
-        self.hostname = hostname
         self.security_group = security_group
         self.subnet = subnet
         self.keypair = keypair
