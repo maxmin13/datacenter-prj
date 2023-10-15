@@ -3,7 +3,6 @@
     "Description": "AWS VPC for CMS application",
     "Name": "cms-datacenter",
     "Cidr": "10.0.0.0/16",
-    "DnsName": "10.0.0.2",
     "Region": "eu-west-1",
     "InternetGateway": "cms-gateway",
     "RouteTable": "cms-routetable",
@@ -78,7 +77,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "admin-box"
+            "Value": "admin-box3"
           },
           {
             "Key": "Class",

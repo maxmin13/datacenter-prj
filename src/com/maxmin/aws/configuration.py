@@ -61,7 +61,6 @@ class DatacenterConfig(object):
             self._datacenter.get("Name"),
             self._datacenter.get("Description"),
             self._datacenter.get("Cidr"),
-            self._datacenter.get("DnsName"),
             self._datacenter.get("Gateway"),
             self._datacenter.get("Region"),
             self._datacenter.get("RouteTable"),
@@ -133,7 +132,6 @@ class VpcConfig(object):
         name,
         description,
         cidr,
-        dns_name,
         gateway,
         region,
         route_table,
@@ -141,7 +139,6 @@ class VpcConfig(object):
         self.name = name
         self.description = description
         self.cidr = cidr
-        self.dns_name = dns_name
         self.gateway = gateway
         self.region = region
         self.route_table = route_table

@@ -22,8 +22,9 @@ git clone git@github.com:maxmin13/datacenter-prj.git
 
 **Configure the project:**
 
-edit: constants.py
-set PROJECT_DIR=<path to the datacenter-prj directory>
+edit datacenter.json and dns.json and set the Vpc and DNS values accourding to your AWS account: <br>
+vpc cidr, region", availability zone, instance private IP, DNS registered domain.
+
 
 **Create the AWS datacenter with instances, subnets, security groups and DNS records:**
 

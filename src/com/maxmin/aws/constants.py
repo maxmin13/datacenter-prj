@@ -4,7 +4,7 @@ Created on Mar 28, 2023
 @author: vagrant
 """
 import configparser
-
+import os
 
 class IniFileConstants(object):
     """
@@ -33,7 +33,7 @@ class Ec2Constants(IniFileConstants):
 
 
 class ProjectDirectories:
-    PROJECT_DIR = "/home/vagrant/workspace/datacenter-prj"
+    PROJECT_DIR = os.getenv('PROJECT_DIR')
     ACCESS_DIR = f"{PROJECT_DIR}/access"
     CONFIG_DIR = f"{PROJECT_DIR}/config"
     TEMPLATES_DIR = f"{PROJECT_DIR}/templates"

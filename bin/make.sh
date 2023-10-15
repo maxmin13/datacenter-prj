@@ -8,7 +8,7 @@ set -o pipefail
 set -o nounset
 set +o xtrace
   
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+export PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 export PYTHONPATH="${PROJECT_DIR}"/src
 python -m venv ${PROJECT_DIR}/.venv
 source "${PROJECT_DIR}"/.venv/bin/activate
