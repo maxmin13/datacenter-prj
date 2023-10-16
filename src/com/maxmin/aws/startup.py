@@ -20,12 +20,13 @@ from com.maxmin.aws.ec2.dao.vpc import Vpc
 from com.maxmin.aws.ec2.service.instance import InstanceService
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
-from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
-from com.maxmin.aws.route53.dao.record import Record
-
+from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
 
 if __name__ == "__main__":
+    # datacenter.json
     datacenter_config = DatacenterConfig(sys.argv[1])
+
+    # hostedzone.json
     hostedzone_config = HostedZoneConfig(sys.argv[2])
 
     Logger.info("Creating datacenter ...")
@@ -194,37 +195,39 @@ if __name__ == "__main__":
         if instance.state == "terminated":
             raise AwsException("The instance is terminated.")
 
-        host_name = (
-            instance_config.name + "." + hostedzone_config.registered_domain
-        )
-
         instance_service = InstanceService()
         instance_service.create_instance(
+            instance_config.name,
             instance_config.parent_img,
             instance_config.security_group,
             instance_config.subnet,
             instance_config.keypair,
             instance_config.private_ip,
-            host_name,
+            hostedzone_config.registered_domain,
             instance_config.username,
             instance_config.password,
             instance_config.tags,
         )
 
         instance.load()
-        
-        dns_name = (
-            instance_config.name + "." + hostedzone_config.registered_domain
-        )
-
-        hosted_zone = HostedZone(hostedzone_config.registered_domain)
-        hosted_zone.load()
-        record = Record(dns_name, hosted_zone.id)
 
         Logger.info("Creating DNS record ...")
 
-        if record.load() is False:
-            record.create(instance.public_ip)
+        hosted_zone_service = HostedZoneService()
+
+        if (
+            hosted_zone_service.check_record_exists(
+                instance_config.name,
+                hostedzone_config.registered_domain,
+                instance.public_ip,
+            )
+            is False
+        ):
+            hosted_zone_service.create_record(
+                instance_config.name,
+                hostedzone_config.registered_domain,
+                instance.public_ip,
+            )
 
             Logger.info("DNS record created!")
         else:

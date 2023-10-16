@@ -6,7 +6,7 @@
   
   vars_files:
     - variables/vars.yml
-    - variables/aws.yml
+    - variables/provision.yml
     
   handlers:
     - name: 'Restart nginx'
@@ -22,14 +22,6 @@
         - "os_family: {{ ansible_facts.os_family }}"
         - "distro: {{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }}"
         - "kernel: {{ ansible_facts.kernel }}"      
-
-    - name: 'Controller host configuration'
-      ansible.builtin.debug:
-        msg:
-        - "domain: {{ instance_dns_domain }}"
-        - "ssh port: {{ ansible_port }}"
-        - "ssh user: {{ ansible_user }}"
-        - "ssh key: {{ ansible_private_key_file }}"
 
     - name: Upgrade all packages
       ansible.builtin.yum: name=* state=latest  

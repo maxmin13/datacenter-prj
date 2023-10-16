@@ -5,7 +5,7 @@
   gather_facts: false
   vars_files:
     - variables/vars.yml
-    - variables/aws.yml
+    - variables/provision.yml
  
   pre_tasks:
       

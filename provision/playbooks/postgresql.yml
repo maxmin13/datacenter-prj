@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - variables/vars.yml
-    - variables/aws.yml
+    - variables/provision.yml
  
   handlers:
     - name: 'Restart postgresql'
@@ -13,15 +13,7 @@
         state: restarted
     
   pre_tasks:
-      
-    - name: 'Controller host configuration'
-      ansible.builtin.debug:
-        msg:
-        - "domain: {{ instance_dns_domain }}"
-        - "ssh port: {{ ansible_port }}"
-        - "ssh user: {{ ansible_user }}"
-        - "ssh key: {{ ansible_private_key_file }}"
-          
+                
     - name: 'Upgrade all packages'
       ansible.builtin.yum: name=* state=latest  
            

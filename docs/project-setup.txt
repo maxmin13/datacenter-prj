@@ -43,6 +43,8 @@ python -m pip install moto~=4.1.14
 # Development software:
 
 python -m pip install black~=23.7.0
+python -m pip install flake8
+python -m pip install pycodestyle
 
 python -m pip freeze > requirements.txt
 
@@ -124,10 +126,6 @@ cd datacenter-prj/bin
 ###################################
 # Provision the instances:
 ###################################
-
-edit datacenter-prj/provision/playbooks/constants/controller.yml
-
-set controller.project.path variable
 
 cd provision
 

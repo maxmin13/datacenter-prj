@@ -5,13 +5,12 @@ aws:
     download:
       dir:
         path: /opt/download  
-    admin:
-      user: "awsadmin"
-      ssh:
-        key:
-          path: /home/vagrant/workspace/datacenter-prj/access/admin-key
-      dns:
-        domain: admin.maxmin.it
+    user: "awsadmin"
+    ssh:
+      key:
+        path: /home/vagrant/workspace/datacenter-prj/access/admin-key
+    dns:
+      domain: admin.maxmin.it
     python:
       download:
         url: "https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tar.xz"

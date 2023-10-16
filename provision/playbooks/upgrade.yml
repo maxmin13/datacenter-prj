@@ -5,18 +5,10 @@
   
   vars_files:
     - variables/vars.yml
-    - variables/aws.yml
+    - variables/provision.yml
     
   pre_tasks:
       
-    - name: 'Controller host configuration'
-      ansible.builtin.debug:
-        msg:
-        - "domain: {{ instance_dns_domain }}"
-        - "ssh port: {{ ansible_port }}"
-        - "ssh user: {{ ansible_user }}"
-        - "ssh key: {{ ansible_private_key_file }}"
-    
   tasks:
     - name: update yum cache
       ansible.builtin.yum: update_cache=true

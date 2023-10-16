@@ -15,6 +15,5 @@ source "${PROJECT_DIR}"/.venv/bin/activate
 python3 -m pip install -r "${PROJECT_DIR}"/requirements.txt
 
 # create vpc, instance, security groups, ...
-python "${PROJECT_DIR}/src/com/maxmin/aws/startup.py" "${PROJECT_DIR}/config/datacenter.json" "${PROJECT_DIR}/config/dns.json"
+python "${PROJECT_DIR}/src/com/maxmin/aws/startup.py" "${PROJECT_DIR}/config/datacenter.json" "${PROJECT_DIR}/config/hostedzone.json"
 
-deactivate

@@ -1,11 +1,11 @@
 {
   "Datacenter": {
-    "Description": "AWS VPC for CMS application",
-    "Name": "cms-datacenter",
+    "Description": "AWS VPC",
+    "Name": "aws-datacenter",
     "Cidr": "10.0.0.0/16",
     "Region": "eu-west-1",
-    "InternetGateway": "cms-gateway",
-    "RouteTable": "cms-routetable",
+    "InternetGateway": "aws-gateway",
+    "RouteTable": "aws-routetable",
     "Subnets": [
       {
         "Description": " AWS network shared by the instances.",
@@ -77,7 +77,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "admin-box3"
+            "Value": "admin-box"
           },
           {
             "Key": "Class",

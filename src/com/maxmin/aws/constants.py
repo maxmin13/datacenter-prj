@@ -6,6 +6,7 @@ Created on Mar 28, 2023
 import configparser
 import os
 
+
 class IniFileConstants(object):
     """
     Loads ini files into a configuration object.
@@ -33,7 +34,7 @@ class Ec2Constants(IniFileConstants):
 
 
 class ProjectDirectories:
-    PROJECT_DIR = os.getenv('PROJECT_DIR')
+    PROJECT_DIR = os.getenv("PROJECT_DIR")
     ACCESS_DIR = f"{PROJECT_DIR}/access"
     CONFIG_DIR = f"{PROJECT_DIR}/config"
     TEMPLATES_DIR = f"{PROJECT_DIR}/templates"

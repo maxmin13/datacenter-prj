@@ -21,12 +21,13 @@ from com.maxmin.aws.logs import Logger
 class InstanceService(object):
     def create_instance(
         self,
+        name: str,
         parent_image_nm: str,
         security_group_nm: str,
         subnet_nm: str,
         keypair_nm: str,
         private_ip: str,
-        hostname: str,
+        registered_domain: str,
         user_nm: str,
         user_pwd: str,
         tags: list,
@@ -46,9 +47,11 @@ class InstanceService(object):
             keypair = Keypair(keypair_nm)
             keypair.load()
 
+            host_name = self.__build_hostname(name, registered_domain)
+
             cloudinit_data = {
                 "username": user_nm,
-                "hostname": hostname,
+                "hostname": host_name,
                 "hashed_password": hashed_pwd,
                 "public_key": keypair.public_key,
             }
@@ -89,3 +92,10 @@ class InstanceService(object):
         except Exception as e:
             Logger.error(str(e))
             raise AwsException("Error creating the instance!")
+
+    def __build_hostname(
+        self,
+        name: str,
+        registered_domain: str,
+    ) -> str:
+        return name + "." + registered_domain

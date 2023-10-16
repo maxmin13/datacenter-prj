@@ -11,8 +11,7 @@ from com.maxmin.aws.ec2.dao.ssh import Keypair
 from com.maxmin.aws.ec2.dao.subnet import Subnet
 from com.maxmin.aws.ec2.dao.vpc import Vpc
 from com.maxmin.aws.logs import Logger
-from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
-from com.maxmin.aws.route53.dao.record import Record
+from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
 
 if __name__ == "__main__":
     datacenter_config = DatacenterConfig(sys.argv[1])
@@ -30,26 +29,28 @@ if __name__ == "__main__":
     # Delete the instances
     #
 
-    hosted_zone = HostedZone(hostedzone_config.registered_domain)
-    hosted_zone.load()
-
     for instance_config in datacenter_config.instances:
         instance = Instance(instance_config.tags)
 
         found_instance = instance.load()
-        
-        dns_name = (
-            instance_config.name + "." + hostedzone_config.registered_domain
-        )
-
-        hosted_zone = HostedZone(hostedzone_config.registered_domain)
-        hosted_zone.load()
-        record = Record(dns_name, hosted_zone.id)
 
         Logger.info("Deleting DNS record ...")
 
-        if record.load() is True:
-            record.delete(instance.public_ip)
+        hosted_zone_service = HostedZoneService()
+
+        if (
+            hosted_zone_service.check_record_exists(
+                instance_config.name,
+                hostedzone_config.registered_domain,
+                instance.public_ip,
+            )
+            is True
+        ):
+            hosted_zone_service.delete_record(
+                instance_config.name,
+                hostedzone_config.registered_domain,
+                instance.public_ip,
+            )
 
             Logger.info("DNS record successfully deleted!")
         else:
