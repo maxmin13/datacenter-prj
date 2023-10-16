@@ -21,7 +21,6 @@ from com.maxmin.aws.logs import Logger
 class InstanceService(object):
     def create_instance(
         self,
-        name: str,
         parent_image_nm: str,
         security_group_nm: str,
         subnet_nm: str,
@@ -31,6 +30,7 @@ class InstanceService(object):
         user_nm: str,
         user_pwd: str,
         tags: list,
+        host_name: str,
     ) -> None:
         """
         Creates/runs an instance.
@@ -46,8 +46,6 @@ class InstanceService(object):
             hashed_pwd = crypt.crypt(user_pwd, salt)
             keypair = Keypair(keypair_nm)
             keypair.load()
-
-            host_name = self.__build_hostname(name, registered_domain)
 
             cloudinit_data = {
                 "username": user_nm,
@@ -92,10 +90,3 @@ class InstanceService(object):
         except Exception as e:
             Logger.error(str(e))
             raise AwsException("Error creating the instance!")
-
-    def __build_hostname(
-        self,
-        name: str,
-        registered_domain: str,
-    ) -> str:
-        return name + "." + registered_domain

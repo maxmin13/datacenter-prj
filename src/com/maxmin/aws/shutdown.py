@@ -40,15 +40,15 @@ if __name__ == "__main__":
 
         if (
             hosted_zone_service.check_record_exists(
-                instance_config.name,
                 hostedzone_config.registered_domain,
+                instance_config.dns_name,
                 instance.public_ip,
             )
             is True
         ):
             hosted_zone_service.delete_record(
-                instance_config.name,
                 hostedzone_config.registered_domain,
+                instance_config.dns_name,
                 instance.public_ip,
             )
 

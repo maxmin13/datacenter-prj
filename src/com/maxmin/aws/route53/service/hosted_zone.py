@@ -13,15 +13,13 @@ from com.maxmin.aws.route53.dao.record import Record
 class HostedZoneService(object):
     def check_record_exists(
         self,
-        name: str,
         registered_domain: str,
+        dns_name: str,
         public_ip: str,
     ) -> bool:
         """
         Checks if a DNS record exists in the hosted zone.
         """
-
-        dns_name = self.__build_dns_domain(name, registered_domain)
 
         try:
             hosted_zone = HostedZone(registered_domain)
@@ -35,16 +33,14 @@ class HostedZoneService(object):
 
     def create_record(
         self,
-        name: str,
         registered_domain: str,
+        dns_name: str,
         public_ip: str,
     ) -> None:
         """
         Creates a DNS record.
         """
         try:
-            dns_name = self.__build_dns_domain(name, registered_domain)
-
             hosted_zone = HostedZone(registered_domain)
             hosted_zone.load()
             record = Record(dns_name, hosted_zone.id)
@@ -56,16 +52,14 @@ class HostedZoneService(object):
 
     def delete_record(
         self,
-        name: str,
         registered_domain: str,
+        dns_name: str,
         public_ip: str,
     ) -> None:
         """
         Deletes a DNS record.
         """
         try:
-            dns_name = self.__build_dns_domain(name, registered_domain)
-
             hosted_zone = HostedZone(registered_domain)
             hosted_zone.load()
             record = Record(dns_name, hosted_zone.id)
@@ -74,10 +68,3 @@ class HostedZoneService(object):
         except Exception as e:
             Logger.error(str(e))
             raise AwsException("Error deleting the DNS record!")
-
-    def __build_dns_domain(
-        self,
-        name: str,
-        registered_domain: str,
-    ) -> str:
-        return name + "." + registered_domain

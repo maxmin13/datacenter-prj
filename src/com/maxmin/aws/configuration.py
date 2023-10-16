@@ -122,6 +122,8 @@ class DatacenterConfig(object):
                     instance.get("ParentImage"),
                     instance.get("TargetImage"),
                     instance.get("Tags"),
+                    instance.get("DnsName"),
+                    instance.get("HostName"),
                 )
             )
 
@@ -200,6 +202,8 @@ class InstanceConfig(object):
         parent_img,
         target_img,
         tags,
+        dns_name,
+        host_name,
     ):
         self.name = name
         self.username = username
@@ -211,3 +215,5 @@ class InstanceConfig(object):
         self.parent_img = parent_img
         self.target_img = target_img
         self.tags = tags
+        self.dns_name = dns_name
+        self.host_name = host_name

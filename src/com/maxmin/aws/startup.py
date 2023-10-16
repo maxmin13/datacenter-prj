@@ -197,7 +197,6 @@ if __name__ == "__main__":
 
         instance_service = InstanceService()
         instance_service.create_instance(
-            instance_config.name,
             instance_config.parent_img,
             instance_config.security_group,
             instance_config.subnet,
@@ -207,6 +206,7 @@ if __name__ == "__main__":
             instance_config.username,
             instance_config.password,
             instance_config.tags,
+            instance_config.host_name,
         )
 
         instance.load()
@@ -217,15 +217,15 @@ if __name__ == "__main__":
 
         if (
             hosted_zone_service.check_record_exists(
-                instance_config.name,
                 hostedzone_config.registered_domain,
+                instance_config.dns_name,
                 instance.public_ip,
             )
             is False
         ):
             hosted_zone_service.create_record(
-                instance_config.name,
                 hostedzone_config.registered_domain,
+                instance_config.dns_name,
                 instance.public_ip,
             )
 
