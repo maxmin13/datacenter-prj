@@ -110,6 +110,11 @@ class DatacenterConfig(object):
                 group_config.rules.append(rule_config)
 
         for instance in self._datacenter.get("Instances"):
+            
+            name = instance.get("Keypair").get("Name")
+            path = instance.get("Keypair").get("Path")
+            keypair = KeyPairConfig(name, path)
+
             self.instances.append(
                 InstanceConfig(
                     instance.get("Name"),
@@ -118,7 +123,7 @@ class DatacenterConfig(object):
                     instance.get("PrivateIp"),
                     instance.get("SecurityGroup"),
                     instance.get("Subnet"),
-                    instance.get("Keypair"),
+                    keypair,
                     instance.get("ParentImage"),
                     instance.get("TargetImage"),
                     instance.get("Tags"),
@@ -217,3 +222,13 @@ class InstanceConfig(object):
         self.tags = tags
         self.dns_name = dns_name
         self.host_name = host_name
+
+
+class KeyPairConfig(object):
+    def __init__(
+        self,
+        name,
+        path,
+    ):
+        self.name = name
+        self.path = path

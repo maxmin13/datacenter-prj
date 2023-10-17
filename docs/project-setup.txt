@@ -78,15 +78,10 @@ Under Interpreter, select your new interpreter
 Click OK
 
 ###################################
-# Project directory:
-###################################
-
-edit: constants.py
-set PROJECT_DIR=path to the datacenter-prj directory
-
-###################################
 # Run the tests:
 ###################################
+
+cd datacenter-prj
 
 export PYTHONPATH="${PYTHONPATH}":src
 

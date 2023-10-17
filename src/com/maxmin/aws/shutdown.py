@@ -66,7 +66,8 @@ if __name__ == "__main__":
         else:
             Logger.warn("Instance already deleted!")
 
-        keypair = Keypair(instance_config.keypair)
+        keypair_config = instance_config.keypair
+        keypair = Keypair(keypair_config.name, keypair_config.path)
 
         if keypair.load() is True:
             keypair.delete()

@@ -9,7 +9,6 @@ import stat
 from botocore.exceptions import ClientError
 
 from com.maxmin.aws.client import Ec2
-from com.maxmin.aws.constants import ProjectDirectories
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
@@ -19,9 +18,10 @@ class Keypair(Ec2):
     classdocs
     """
 
-    def __init__(self, name):
+    def __init__(self, name:str, path:str):
         super().__init__()
         self.name = name
+        self.path = path
         self.id = None
         self.public_key = None
 
@@ -56,7 +56,6 @@ class Keypair(Ec2):
         encoded PKCS#8 private key.
         If a key with the specified name already exists, Amazon EC2 returns
         an error.
-        The private key is saved in the local 'access' directory.
         """
 
         if self.load() is True:
@@ -79,7 +78,8 @@ class Keypair(Ec2):
             self.id = response.get("KeyPairId")
 
             private_key = response.get("KeyMaterial")
-            private_key_file = f"{ProjectDirectories.ACCESS_DIR}/{self.name}"
+            
+            private_key_file = os.path.join(self.path, self.name)
             private_key_file_handle = open(private_key_file, "x")
             private_key_file_handle.write(private_key)
             private_key_file_handle.close()
@@ -100,10 +100,10 @@ class Keypair(Ec2):
         try:
             self.ec2.delete_key_pair(KeyName=self.name)
 
-            private_key = f"{ProjectDirectories.ACCESS_DIR}/{self.name}"
+            private_key_file = os.path.join(self.path, self.name)
 
-            if os.path.isfile(private_key) is True:
-                os.remove(private_key)
+            if os.path.isfile(private_key_file) is True:
+                os.remove(private_key_file)
 
             Logger.info("Keypair deleted!")
 

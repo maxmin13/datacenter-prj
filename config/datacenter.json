@@ -72,7 +72,11 @@
         "PrivateIp": "10.0.20.35",
         "SecurityGroup": "admin-sgp",
         "Subnet": "admin-subnet",
-        "Keypair": "admin-key",
+        "Keypair": 
+            {
+                "Name": "admin-key",
+                "Path": "/home/vagrant/workspace/datacenter-prj/access"
+            },
         "ParentImage": "amzn2-ami-kernel-5.10-hvm-2.0.20230719.0-x86_64-gp2",
         "DnsName": "admin.maxmin.it",
         "HostName": "admin.maxmin.it",

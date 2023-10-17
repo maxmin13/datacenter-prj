@@ -24,9 +24,8 @@ class InstanceService(object):
         parent_image_nm: str,
         security_group_nm: str,
         subnet_nm: str,
-        keypair_nm: str,
+        keypair: Keypair,
         private_ip: str,
-        registered_domain: str,
         user_nm: str,
         user_pwd: str,
         tags: list,
@@ -44,7 +43,6 @@ class InstanceService(object):
 
             salt = crypt.mksalt(method=crypt.METHOD_SHA512, rounds=4096)
             hashed_pwd = crypt.crypt(user_pwd, salt)
-            keypair = Keypair(keypair_nm)
             keypair.load()
 
             cloudinit_data = {

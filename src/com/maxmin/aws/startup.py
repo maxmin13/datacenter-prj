@@ -178,7 +178,8 @@ if __name__ == "__main__":
     #
 
     for instance_config in datacenter_config.instances:
-        keypair = Keypair(instance_config.keypair)
+        keypair_config = instance_config.keypair
+        keypair = Keypair(keypair_config.name, keypair_config.path)
 
         if keypair.load() is False:
             keypair.create()
@@ -200,9 +201,8 @@ if __name__ == "__main__":
             instance_config.parent_img,
             instance_config.security_group,
             instance_config.subnet,
-            instance_config.keypair,
+            keypair,
             instance_config.private_ip,
-            hostedzone_config.registered_domain,
             instance_config.username,
             instance_config.password,
             instance_config.tags,
