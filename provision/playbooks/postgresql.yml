@@ -1,4 +1,4 @@
-- name: Installs postgresql server
+- name: Install postgresql server
   hosts:
     - database_postgresql
   gather_facts: false

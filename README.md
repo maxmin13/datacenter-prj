@@ -6,13 +6,13 @@ The datacenter consists of a VPC, a subnet, one security group, one Linux 2 inst
 **Requirements:**
 
 - Fedora 38
-- Python 3.11
+- Python 3.11.4
 - ansible 2.14.5
+- aws-cli/2.13.0
 
 **Clone the project:**
 
 git clone git@github.com:maxmin13/datacenter-prj.git
-
 
 **Configure the AWS credentials and default region on the controller machine:**
 
