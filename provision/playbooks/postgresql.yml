@@ -5,6 +5,7 @@
   vars_files:
     - variables/vars.yml
     - variables/provision.yml
+    - "{{ lookup('ansible.builtin.env', 'PROJECT_DIR') }}/config/datacenter.json"
  
   handlers:
     - name: 'Restart postgresql'

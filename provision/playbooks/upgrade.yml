@@ -6,8 +6,14 @@
   vars_files:
     - variables/vars.yml
     - variables/provision.yml
+    - "{{ lookup('ansible.builtin.env', 'PROJECT_DIR') }}/config/datacenter.json"
     
   pre_tasks:
+  
+    - name: 'variables test'
+      ansible.builtin.debug:
+        msg: 
+        - "xxx: {{ Datacenter.Description }}"
       
   tasks:
     - name: update yum cache
