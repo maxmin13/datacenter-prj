@@ -9,20 +9,27 @@ The datacenter consists of a VPC, a subnet, one security group, one Linux 2 inst
 - Python 3.11
 - ansible 2.14.5
 
+**Clone the project:**
+
+git clone git@github.com:maxmin13/datacenter-prj.git
+
+
 **Configure the AWS credentials and default region on the controller machine:**
 
 ```
 aws configure
 ```
 
-**Clone the project:**
-
-git clone git@github.com:maxmin13/datacenter-prj.git
-
 **Configure the project:**
 
-edit datacenter.json and hostedzone.json and set the Vpc and DNS values accourding to your AWS account: <br>
-vpc cidr, region", availability zone, instance private IP, DNS registered domain.
+edit ** datacenter.json ** and ** hostedzone.json ** and set the Vpc and DNS values accourding to your AWS account: <br>
+
+* VPC CIDR (eg: "Cidr": "10.0.0.0/16")<br>
+* VPC region (eg: "Region": "eu-west-1")<br>
+* Availability zone (eg: "Az": "eu-west-1a")<br>
+* Subnet CIDR (eg: "Cidr": "10.0.20.0/24")<br>
+* admin instance private IP (eg: "PrivateIp": "10.0.20.35")<br>
+* DNS registered domain (eg: "RegisteredDomain": "maxmin.it")<br>
 
 
 **Create AWS datacenter and DNS record:**
@@ -64,13 +71,6 @@ ansible-playbook -b -K playbooks/nginx.yml
 ansible-playbook -b -K playbooks/postgresql.yml
 ```
 
-**Delete the datacenter:**
-
-```
-cd bin
-./delete.sh
-```
-
 **Connect to the instance:**
 
 ```
@@ -78,4 +78,10 @@ cd access
 rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<instance-public-ip>
 ```
 
+**Delete the datacenter:**
+
+```
+cd bin
+./delete.sh
+```
 <br>
