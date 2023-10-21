@@ -116,7 +116,7 @@ cd datacenter-prj/bin
 # delete aws datacenter
 cd datacenter-prj/bin
 
-./make.sh
+./make.sh 
 
 ###################################
 # Provision the instances:
