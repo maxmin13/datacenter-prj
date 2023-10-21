@@ -40,9 +40,9 @@ if {$exit_code > 0} {
     puts "Error: upgrading system.\n"
     exit $exit_code
 }
-else {
-    puts "System upgraded.\n"
-}
+
+puts "System upgraded.\n"
+
 
 ##################
 ##### OPENSSL ####
@@ -63,9 +63,8 @@ if {$exit_code > 0} {
     puts "Error: upgrading openssl.\n"
     exit $exit_code
 }
-else {
-    puts "Openssl upgraded.\n"
-}
+
+puts "Openssl upgraded.\n"
 
 #################
 ##### PYTHON ####
@@ -86,9 +85,8 @@ if {$exit_code > 0} {
     puts "Error: installing python.\n"
     exit $exit_code
 }
-else {
-    puts "Python installed.\n"
-}
+
+puts "Python installed.\n"
 
 #####################
 ##### POSTGRESQL ####
@@ -109,9 +107,8 @@ if {$exit_code > 0} {
     puts "Error: installing postgresql.\n"
     exit $exit_code
 }
-else {
-    puts "Postgresql installed.\n"
-}
+
+puts "Postgresql installed.\n"
 
 ################
 ##### NGINX ####
@@ -132,8 +129,7 @@ if {$exit_code > 0} {
     puts "Error: installing nginx.\n"
     exit $exit_code
 }
-else {
-    puts "Nginx installed.\n"
-}
+
+puts "Nginx installed.\n"
 
 puts "Datacenter provisioned.\n"
