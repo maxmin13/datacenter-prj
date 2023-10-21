@@ -40,7 +40,7 @@ if {$exit_code > 0} {
     puts "Error: upgrading system.\n"
     exit $exit_code
 }
-else (
+else {
     puts "System upgraded.\n"
 }
 
