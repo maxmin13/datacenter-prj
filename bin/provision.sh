@@ -1,0 +1,139 @@
+#!/usr/bin/expect -f
+
+##
+## Provisions an AWS datacenter.
+##
+## run:
+##
+## export DATACENTER_PROJECT_DIR=<path to the project directory>
+## export REMOTE_USER_PASSWORD=awsadmin
+##
+## ./provision.exp 
+##
+
+#################################
+## AWS datacenter Provisioning ##
+#################################
+
+set DATACENTER_PROJECT_DIR "$env(DATACENTER_PROJECT_DIR)"
+set REMOTE_USER_PASSWORD "$env(REMOTE_USER_PASSWORD)"
+set ANSIBLE_PLAYBOOK_CMD "${DATACENTER_PROJECT_DIR}/.venv/bin/ansible-playbook"
+
+cd ${DATACENTER_PROJECT_DIR}/provision
+
+########################
+##### UPDATE SYSTEM ####
+########################
+
+spawn ${ANSIBLE_PLAYBOOK_CMD} -b -K playbooks/upgrade.yml
+match_max 100000
+expect -exact "BECOME password: "
+send -- "${REMOTE_USER_PASSWORD}\r"
+
+expect eof
+catch wait result
+set exit_code "[lindex $result 3]"
+
+puts "$exit_code\n"
+
+if {$exit_code > 0} {
+    puts "Error: upgrading system.\n"
+    exit $exit_code
+}
+else (
+    puts "System upgraded.\n"
+}
+
+##################
+##### OPENSSL ####
+##################
+
+spawn ${ANSIBLE_PLAYBOOK_CMD} -b -K playbooks/openssl.yml
+match_max 100000
+expect -exact "BECOME password: "
+send -- "${REMOTE_USER_PASSWORD}\r"
+
+expect eof
+catch wait result
+set exit_code "[lindex $result 3]"
+
+puts "$exit_code\n"
+
+if {$exit_code > 0} {
+    puts "Error: upgrading openssl.\n"
+    exit $exit_code
+}
+else {
+    puts "Openssl upgraded.\n"
+}
+
+#################
+##### PYTHON ####
+#################
+
+spawn ${ANSIBLE_PLAYBOOK_CMD} -b -K playbooks/python.yml
+match_max 100000
+expect -exact "BECOME password: "
+send -- "${REMOTE_USER_PASSWORD}\r"
+
+expect eof
+catch wait result
+set exit_code "[lindex $result 3]"
+
+puts "$exit_code\n"
+
+if {$exit_code > 0} {
+    puts "Error: installing python.\n"
+    exit $exit_code
+}
+else {
+    puts "Python installed.\n"
+}
+
+#####################
+##### POSTGRESQL ####
+#####################
+
+spawn ${ANSIBLE_PLAYBOOK_CMD} -b -K playbooks/postgresql.yml
+match_max 100000
+expect -exact "BECOME password: "
+send -- "${REMOTE_USER_PASSWORD}\r"
+
+expect eof
+catch wait result
+set exit_code "[lindex $result 3]"
+
+puts "$exit_code\n"
+
+if {$exit_code > 0} {
+    puts "Error: installing postgresql.\n"
+    exit $exit_code
+}
+else {
+    puts "Postgresql installed.\n"
+}
+
+################
+##### NGINX ####
+################
+
+spawn ${ANSIBLE_PLAYBOOK_CMD} -b -K playbooks/nginx.yml
+match_max 100000
+expect -exact "BECOME password: "
+send -- "${REMOTE_USER_PASSWORD}\r"
+
+expect eof
+catch wait result
+set exit_code "[lindex $result 3]"
+
+puts "$exit_code\n"
+
+if {$exit_code > 0} {
+    puts "Error: installing nginx.\n"
+    exit $exit_code
+}
+else {
+    puts "Nginx installed.\n"
+}
+
+puts "Datacenter provisioned.\n"

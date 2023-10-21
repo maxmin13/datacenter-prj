@@ -40,42 +40,14 @@ cd bin
 
 ```
 
-**Upgrade all the instances and istall some basic programs:**
+**Upgrade all the instances, upggrade Openssl, Python, install Postgresql, Nginx:**
 
 ```
-cd provision
-ansible-playbook -b -K playbooks/upgrade.yml
-```
+export DATACENTER_PROJECT_DIR=<path to the project directory>
+export REMOTE_USER_PASSWORD=awsadmin
 
-**Install OpenSSL 1.1.1:**
-
-```
-ansible-playbook -b -K playbooks/openssl.yml
-```
-
-**Install Python 3.11.4:**
-
-```
-ansible-playbook -b -K playbooks/python.yml
-```
-
-**Install nginx web server:**
-
-```
-ansible-playbook -b -K playbooks/nginx.yml
-```
-
-**Install Postgresql database:**
-
-```
-ansible-playbook -b -K playbooks/postgresql.yml
-```
-
-**Connect to the instance:**
-
-```
-cd access
-rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<instance-public-ip>
+cd bin
+./provision.sh
 ```
 
 **Delete the datacenter:**

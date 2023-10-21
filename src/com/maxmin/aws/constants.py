@@ -34,10 +34,10 @@ class Ec2Constants(IniFileConstants):
 
 
 class ProjectDirectories:
-    PROJECT_DIR = os.getenv("PROJECT_DIR")
-    ACCESS_DIR = f"{PROJECT_DIR}/access"
-    CONFIG_DIR = f"{PROJECT_DIR}/config"
-    TEMPLATES_DIR = f"{PROJECT_DIR}/templates"
+    DATACENTER_PROJECT_DIR = os.getenv("DATACENTER_PROJECT_DIR")
+    ACCESS_DIR = f"{DATACENTER_PROJECT_DIR}/access"
+    CONFIG_DIR = f"{DATACENTER_PROJECT_DIR}/config"
+    TEMPLATES_DIR = f"{DATACENTER_PROJECT_DIR}/templates"
 
 
 class ProjectFiles:

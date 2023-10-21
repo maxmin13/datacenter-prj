@@ -9,6 +9,8 @@ set -o nounset
 set +o xtrace
   
 export PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+echo "PROJECT_DIR: ${PROJECT_DIR}"
+
 export PYTHONPATH="${PROJECT_DIR}"/src
 python -m venv ${PROJECT_DIR}/.venv
 source "${PROJECT_DIR}"/.venv/bin/activate
