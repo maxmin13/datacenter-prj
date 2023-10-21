@@ -14,13 +14,12 @@ set +o xtrace
 #
 ############################################################################
   
-DATACENTER_PROJECT_DIR
 DATACENTER_PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/src
 
 {
     export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/src
-    python -m venv ${DATACENTER_PROJECT_DIR}/.venv
+    python -m venv "${DATACENTER_PROJECT_DIR}"/.venv
     source "${DATACENTER_PROJECT_DIR}"/.venv/bin/activate
     python3 -m pip install -r "${DATACENTER_PROJECT_DIR}"/requirements.txt
 } > /dev/null
