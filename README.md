@@ -56,4 +56,13 @@ cd bin
 cd bin
 ./delete.sh
 ```
+
+**Log in the remote instance:**
+
+```
+cd access
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<remote instance IP address>
+
+```
+
 <br>
