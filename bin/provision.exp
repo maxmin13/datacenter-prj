@@ -34,7 +34,7 @@ expect eof
 catch wait result
 set exit_code "[lindex $result 3]"
 
-puts "$exit_code\n"
+# puts "$exit_code\n"
 
 if {$exit_code > 0} {
     puts "Error: upgrading system.\n"
@@ -57,7 +57,7 @@ expect eof
 catch wait result
 set exit_code "[lindex $result 3]"
 
-puts "$exit_code\n"
+# puts "$exit_code\n"
 
 if {$exit_code > 0} {
     puts "Error: upgrading openssl.\n"
@@ -80,7 +80,7 @@ expect eof
 catch wait result
 set exit_code "[lindex $result 3]"
 
-puts "$exit_code\n"
+# puts "$exit_code\n"
 
 if {$exit_code > 0} {
     puts "Error: installing python.\n"
@@ -103,7 +103,7 @@ expect eof
 catch wait result
 set exit_code "[lindex $result 3]"
 
-puts "$exit_code\n"
+# puts "$exit_code\n"
 
 if {$exit_code > 0} {
     puts "Error: installing postgresql.\n"
@@ -126,7 +126,7 @@ expect eof
 catch wait result
 set exit_code "[lindex $result 3]"
 
-puts "$exit_code\n"
+# puts "$exit_code\n"
 
 if {$exit_code > 0} {
     puts "Error: installing nginx.\n"

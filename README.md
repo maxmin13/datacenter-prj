@@ -47,7 +47,7 @@ export DATACENTER_PROJECT_DIR=<path to the project directory>
 export REMOTE_USER_PASSWORD=awsadmin
 
 cd bin
-./provision.sh
+./provision.exp
 ```
 
 **Delete the datacenter:**
