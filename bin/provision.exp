@@ -1,15 +1,16 @@
 #!/usr/bin/expect -f
 
-##
+#########################################################################
 ## Provisions an AWS datacenter.
 ##
 ## run:
 ##
 ## export DATACENTER_PROJECT_DIR=<path to the project directory>
-## export REMOTE_USER_PASSWORD=awsadmin
+## export REMOTE_USER_PASSWORD=<instance remoter user pwd, eg: awsadmin>
 ##
 ## ./provision.exp 
 ##
+#########################################################################
 
 #################################
 ## AWS datacenter Provisioning ##
