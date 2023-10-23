@@ -9,11 +9,21 @@
     - "{{ lookup('ansible.builtin.env', 'DATACENTER_PROJECT_DIR') }}/config/datacenter.json"
  
   pre_tasks:
+  
+    - name: 'Controller host configuration'
+      ansible.builtin.debug:
+        msg:
+        - "domain: {{ instance_dns_domain }}"
+        - "ssh port: {{ ansible_port }}"
+        - "ssh user: {{ ansible_user }}"
+        - "ssh key: {{ ansible_private_key_file }}"  
       
-    - name: Upgrade all packages
-      ansible.builtin.yum: name=* state=latest 
+#    - name: Upgrade all packages
+#      become: true
+#      ansible.builtin.yum: name=* state=latest 
            
-    - name: Installs a list of packages 
+    - name: Installs a list of packages
+      become: true 
       ansible.builtin.yum:
         name:
           - gcc
@@ -36,6 +46,7 @@
           - lzma 
           
     - name: Create download directory
+      become: true
       ansible.builtin.file:
         path: "{{ aws.instance.download.dir.path }}"
         state: directory
@@ -45,26 +56,27 @@
  
   tasks:
   
-    - name: Download python archive
+    - name: Download Python archive
       ansible.builtin.get_url:
         url: "{{ aws.instance.python.download.url }}"
         dest: "{{ aws.instance.download.dir.path }}"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}" 
         
-    - name: Unarchive python
+    - name: Unarchive Python
       ansible.builtin.unarchive:
         src: "{{ aws.instance.download.dir.path }}/{{ aws.instance.python.archive.name }}"
         dest: "{{ aws.instance.download.dir.path }}"
         remote_src: true
             
-    - name: Initialize python
+    - name: Initialize Python
       ansible.builtin.shell: "export LD_RUN_PATH={{ aws.instance.openssl.install.dir.path }}/lib && cd {{ aws.instance.download.dir.path }}/{{ aws.instance.python.archive.directory }} && ./configure --enable-optimizations --with-openssl={{ aws.instance.openssl.install.dir.path }} -C"
       
-    - name: Make python
+    - name: Make Python
       ansible.builtin.shell: "cd {{ aws.instance.download.dir.path }}/{{ aws.instance.python.archive.directory }} && make clean && make"
       
-    - name: Build python
+    - name: Build Python
+      become: true
       ansible.builtin.shell: "cd {{ aws.instance.download.dir.path }}/{{ aws.instance.python.archive.directory }} && make altinstall"     
       
     - name: Python version
@@ -81,6 +93,7 @@
   post_tasks:
   
     - name: Delete download directory
+      become: true
       ansible.builtin.file:
         path: "{{ aws.instance.download.dir.path }}"
         state: absent        

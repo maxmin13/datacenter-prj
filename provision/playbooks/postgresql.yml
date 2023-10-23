@@ -1,4 +1,4 @@
-- name: Install postgresql server
+- name: Install Postgresql server
   hosts:
     - database_postgresql
   gather_facts: false
@@ -8,70 +8,87 @@
     - "{{ lookup('ansible.builtin.env', 'DATACENTER_PROJECT_DIR') }}/config/datacenter.json"
  
   handlers:
-    - name: 'Restart postgresql'
+    - name: 'Restart Postgresql'
       ansible.builtin.service:
         name: postgresql-14
         state: restarted
     
   pre_tasks:
+  
+    - name: 'Controller host configuration'
+      ansible.builtin.debug:
+        msg:
+        - "domain: {{ instance_dns_domain }}"
+        - "ssh port: {{ ansible_port }}"
+        - "ssh user: {{ ansible_user }}"
+        - "ssh key: {{ ansible_private_key_file }}"  
                 
-    - name: 'Upgrade all packages'
-      ansible.builtin.yum: name=* state=latest  
+#    - name: 'Upgrade all packages'
+#      become: true
+#      ansible.builtin.yum: name=* state=latest  
            
   tasks: 
   
-    - name: 'Remove postgresql'
+    - name: 'Remove Postgresql'
+      become: true
       yum:
         name: postgresql
         state: absent  
 
-    - name: Add postgresql repository
+    - name: Delete Postgresql data directory
+      become: true
+      ansible.builtin.file:
+        path: "/var/lib/pgsql"
+        state: absent         
+
+    - name: Add Postgresql repository
+      become: true
       ansible.builtin.yum_repository:
         name: postgresql
         description: postgresql 14
         baseurl: https://download.postgresql.org/pub/repos/yum/14/redhat/rhel-7-x86_64  
 
-    - name: 'Install postgresql packages'
+    - name: 'Install Postgresql packages'
+      become: true
       ansible.builtin.yum:
         update_cache: true
         disable_gpg_check: true
         state: 'present'      
         name:
           - postgresql14 
-          - postgresql14-server       
-          
-    - name: 'Install Python packages that allows Ansible modules to interact with the database'
-      ansible.builtin.pip: "name={{ item }}  state=present"
-      with_items:
-        - psycopg2-binary  
+          - postgresql14-server   
                 
-    - name: 'Find out if PostgreSQL is initialized'
+    - name: 'Find out if Postgresql is initialized'
+      become: true
       ansible.builtin.stat:
         path: "/var/lib/pgsql/data/pg_hba.conf"
       register: postgres_data
 
-    - name: 'Initialize PostgreSQL'
+    - name: 'Initialize Postgresql'
+      become: true
       ansible.builtin.shell: "/usr/pgsql-14/bin/postgresql-14-setup initdb"
       when: not postgres_data.stat.exists
       
-    - name: 'Starting postgresql services'
+    - name: 'Starting Postgresql services'
+      become: true
       ansible.builtin.service:
         name: postgresql-14
         state: started
         enabled: true
       
     - name: 'Allow remote connection'
+      become: true
       ansible.builtin.lineinfile:
          path: "/var/lib/pgsql/14/data/postgresql.conf"
          regexp: "#listen_addresses = 'localhost'*" 
          line: "listen_addresses = '*'"
          owner: postgres
          group: postgres
-         mode: '0644'    
-      become: true
-      become_user: root     
+         mode: '0644'       
        
     - name: "Allow md5 connection"
+      become: true
+      become_user: postgres
       community.general.postgresql_pg_hba:
         dest: "/var/lib/pgsql/14/data/pg_hba.conf"
         contype: host
@@ -80,9 +97,11 @@
         method: md5
         users: all
         create: true
+
+    - name: 'Restart Postgresql services'
       become: true
-      become_user: postgres
-      notify: Restart postgresql  
+      ansible.builtin.service:
+        name: postgresql-14
+        state: restarted
+        enabled: true 
             
-    - name: 'Restart postgresql'
-      meta: flush_handlers  

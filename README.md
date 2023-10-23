@@ -40,14 +40,16 @@ cd bin
 
 ```
 
-**Upgrade all the instances, upggrade Openssl, Python, install Postgresql, Nginx:**
+**Upgrade Openssl, install Python, Postgresql, Nginx:**
 
 ```
-export DATACENTER_PROJECT_DIR=<path to the project directory>
-export REMOTE_USER_PASSWORD=awsadmin
+export REMOTE_USER=<remote instance user, eg: awsadmin>
+export REMOTE_USER_PASSWORD=<remote instance user pwd, eg: awsadmin>
 
 cd bin
-./provision.exp
+
+./provision.sh
+
 ```
 
 **Delete the datacenter:**

@@ -1,4 +1,4 @@
-- name: Configure a webserver with nginx
+- name: Configure a webserver with Nginx
   hosts:
     - webserver_nginx
     
@@ -8,14 +8,16 @@
     - variables/vars.yml
     - variables/provision.yml
     - "{{ lookup('ansible.builtin.env', 'DATACENTER_PROJECT_DIR') }}/config/datacenter.json"
-    
-  handlers:
-    - name: 'Restart nginx'
-      ansible.builtin.service:
-        name: nginx
-        state: restarted
-        
+          
   pre_tasks:
+  
+    - name: 'Controller host configuration'
+      ansible.builtin.debug:
+        msg:
+        - "domain: {{ instance_dns_domain }}"
+        - "ssh port: {{ ansible_port }}"
+        - "ssh user: {{ ansible_user }}"
+        - "ssh key: {{ ansible_private_key_file }}"  
       
     - name: 'Remote host'
       ansible.builtin.debug:
@@ -24,23 +26,26 @@
         - "distro: {{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }}"
         - "kernel: {{ ansible_facts.kernel }}"      
 
-    - name: Upgrade all packages
-      ansible.builtin.yum: name=* state=latest  
+#    - name: Upgrade all packages
+#      become: true
+#      ansible.builtin.yum: name=* state=latest  
              
   tasks:
                      
-    - name: Ensure nginx is installed
+    - name: Ensure Nginx is installed
+      become: true
       ansible.builtin.package:
         name: nginx
         update_cache: true       
       
-    - name: Create directories for nginx TLS certificates
+    - name: Create directories for Nginx TLS certificates
+      become: true
       ansible.builtin.file:
         path: "{{ aws.instance.nginx.tls.dir.path }}"
         state: directory
         mode: 488
       
-    - name: Create nginx tls certificates
+    - name: Create Nginx tls certificates
       become: true
       ansible.builtin.command: >
         openssl req -new -x509 -nodes -out {{ aws.instance.nginx.cert.file }}
@@ -48,27 +53,32 @@
       args:
         chdir: "{{ aws.instance.nginx.tls.dir.path }}"    
       
-    - name: Remove the default nginx config file
+    - name: Remove the default Nginx config file
       become: true
       ansible.builtin.file:
         path: "{{ aws.instance.nginx.install.dir.path }}/nginx.conf"
         state: absent
 
-    - name: Deploy nginx config file
+    - name: Deploy Nginx config file
+      become: true
       ansible.builtin.template:
         src: nginx/nginx.conf.j2
         dest: "{{ aws.instance.nginx.install.dir.path }}/nginx.conf"
         mode: 436
-      notify: Restart nginx  
 
     - name: index.html file
+      become: true
       ansible.builtin.template:
         src: nginx/index.html.j2
         dest: "{{ aws.instance.nginx.root.dir.path }}/index.html"
         mode: 436
         
-    - name: Restart nginx
-      meta: flush_handlers
+    - name: 'Restart Nginx service'
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+        enabled: true 
       
     - name: 'Test it! http://{{ instance_dns_domain }}:{{ aws.instance.nginx.http.port }}/index.html'
       become: false
