@@ -16,12 +16,14 @@ install eclipse pydev plugin from marketplace.
 File/New/Project (not PyDev project)
 Choose General/Project, click Next
 Enter a project name
-Uncheck "use default location" and set the location to the top directory of my project
+Uncheck "use default location" and set the location to the top directory of the datacenter-prj
 Click Finish
 Right-click on the project and select PyDev / Set as Pydev Project
+when asked to select Python interpreter, click don't ask again
 Right-click on the project and select Properties
 go to PyDev - PYTHONPATH
-In the Source Folders tab, use "Add source folder" to add folders that need to be on your python path for your project to work. 
+In the Source Folders tab, use "Add source folder" to add folders that need to be on your python path for your project to work:
+src, tests
 
 #################################################
 # create a virtual environment with python 3.11:
@@ -52,12 +54,12 @@ python -m pip freeze > requirements.txt
 # Using PyDev with virtualenv
 ###################################
 
-add the interpreter from your virtual environment as another Python interpreter:
+add the interpreter from the virtual environment as another Python interpreter:
 
 Open Preferences
-Go to PyDev/Interpreter - Python
+Go to PyDev/Interpreter - Python interpreter
 Click "New..."
-For the Executable, enter:
+For the Executable input box, enter:
 
 /home/vagrant/workspace/datacenter-prj/.venv/bin/python
 
@@ -84,6 +86,7 @@ Click OK
 cd datacenter-prj
 
 export PYTHONPATH="${PYTHONPATH}":src
+export DATACENTER_PROJECT_DIR=/home/vagrant/workspace/datacenter-prj
 
 python -m pytest tests
 
@@ -95,6 +98,8 @@ Open Preferences
 Go to PyDev/PyUnit
 
 set Test Runner as Py.test runner
+
+in the run configuration of test_instance.py, Environment tab, add variable DATACENTER_PROJECT_DIR /home/vagrant/workspace/datacenter-prj
 
 ###################################
 # AWS credentials:
