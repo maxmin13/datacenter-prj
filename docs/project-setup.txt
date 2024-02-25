@@ -102,6 +102,8 @@ set Test Runner as Py.test runner
 
 in the run configuration of test_instance.py and test_ssh.py, Environment tab, add variable DATACENTER_PROJECT_DIR with value /home/vagrant/workspace/datacenter-prj
 
+right click on the test file, run as, Python unit-tests
+
 ###################################
 # AWS credentials:
 ###################################
