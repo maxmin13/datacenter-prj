@@ -23,7 +23,7 @@ def keypair():
     """
     return an keypar object to test.
     """
-    return Keypair("mykeypair")
+    return Keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def test_create_keypair(keypair, test_utils):
 
 @mock_ec2
 def test_create_keypair_twice(keypair, test_utils):
-    test_utils.create_keypair("mykeypair")
+    test_utils.create_keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
 
     try:
         keypair.create()
@@ -79,7 +79,7 @@ def test_create_keypair_twice(keypair, test_utils):
 @mock_ec2
 def test_delete_keypair(keypair, test_utils):
     try:
-        test_utils.create_keypair("mykeypair")
+        test_utils.create_keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
 
         response = test_utils.decribe_keypairs("mykeypair")
 
@@ -112,7 +112,7 @@ def test_load_keypair(keypair, test_utils):
     try:
         assert keypair.load() is False
 
-        test_utils.create_keypair("mykeypair")
+        test_utils.create_keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
 
         assert keypair.load() is True
 

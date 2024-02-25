@@ -53,8 +53,8 @@ def test_create_instance(instance, test_utils):
 
         assert len(response) == 0
 
-        keypair_id = test_utils.create_keypair("mykeypair")
-        keypair = Keypair("mykeypair")
+        keypair_id = test_utils.create_keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
+        keypair = Keypair("mykeypair",  ProjectDirectories.ACCESS_DIR)
         keypair.id = keypair_id
 
         tags = [
@@ -87,8 +87,8 @@ def test_create_instance_twice(instance, test_utils):
     )
     test_utils.create_instance("guest-box", AMI_ID)
 
-    keypair_id = test_utils.create_keypair("mykeypair")
-    keypair = Keypair("mykeypair")
+    keypair_id = test_utils.create_keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
+    keypair = Keypair("mykeypair", ProjectDirectories.ACCESS_DIR)
     keypair.id = keypair_id
 
     tags = [

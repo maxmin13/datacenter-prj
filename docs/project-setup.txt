@@ -83,12 +83,13 @@ Click OK
 # Run the tests:
 ###################################
 
-cd datacenter-prj
-
-export PYTHONPATH="${PYTHONPATH}":src
 export DATACENTER_PROJECT_DIR=/home/vagrant/workspace/datacenter-prj
+export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/src;"${DATACENTER_PROJECT_DIR}"/tests
 
-python -m pytest tests
+cd datacenter-prj
+source .venv/bin/activate
+cd tests
+python -m pytest .
 
 ###################################
 # Run the tests in eclipse:
@@ -99,7 +100,7 @@ Go to PyDev/PyUnit
 
 set Test Runner as Py.test runner
 
-in the run configuration of test_instance.py, Environment tab, add variable DATACENTER_PROJECT_DIR /home/vagrant/workspace/datacenter-prj
+in the run configuration of test_instance.py and test_ssh.py, Environment tab, add variable DATACENTER_PROJECT_DIR with value /home/vagrant/workspace/datacenter-prj
 
 ###################################
 # AWS credentials:

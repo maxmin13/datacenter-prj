@@ -458,7 +458,7 @@ class TestUtils(object):
         elif len(response) == 0:
             return None
 
-    def create_keypair(self, name: str):
+    def create_keypair(self, name: str, path: str):
         response = self.ec2.create_key_pair(
             KeyName=name,
             KeyType="rsa",
@@ -466,7 +466,7 @@ class TestUtils(object):
         )
 
         private_key = response.get("KeyMaterial")
-        private_key_file = f"{ProjectDirectories.ACCESS_DIR}/{name}"
+        private_key_file = f"{path}/{name}"
         private_key_file_handle = open(private_key_file, "w")
         private_key_file_handle.write(private_key)
         private_key_file_handle.close()
