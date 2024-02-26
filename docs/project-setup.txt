@@ -58,8 +58,8 @@ add the interpreter from the virtual environment as another Python interpreter:
 
 Open Preferences
 Go to PyDev/Interpreter - Python interpreter
-Click "New..."
-For the Executable input box, enter:
+Click New, Browse for python/pypy exe
+enter a name, and the path to the executable
 
 /home/vagrant/workspace/datacenter-prj/.venv/bin/python
 
@@ -84,11 +84,11 @@ Click OK
 ###################################
 
 export DATACENTER_PROJECT_DIR=/home/vagrant/workspace/datacenter-prj
-export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/src;"${DATACENTER_PROJECT_DIR}"/tests
+export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/project/src:"${DATACENTER_PROJECT_DIR}"/project/tests
 
 cd datacenter-prj
 source .venv/bin/activate
-cd tests
+cd project/tests
 python -m pytest .
 
 ###################################

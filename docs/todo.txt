@@ -1,0 +1,2 @@
+
+print the instance public address to the console

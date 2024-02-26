@@ -29,13 +29,14 @@ edit **datacenter.json** and **hostedzone.json** and set the Vpc and DNS values 
 * Availability zone (eg: "Az": "eu-west-1a")<br>
 * Subnet CIDR (eg: "Cidr": "10.0.20.0/24")<br>
 * admin instance private IP (eg: "PrivateIp": "10.0.20.35")<br>
-* DNS registered domain (eg: "RegisteredDomain": "maxmin.it")<br>
+* DNS registered domain (your domain registered with the AWS registrar, eg: "RegisteredDomain": "maxmin.it")<br>
 
 
 **Create AWS datacenter and DNS record:**
 
 ```
 cd bin
+sudo chmod -R -x  *.sh 
 ./make.sh
 
 ```

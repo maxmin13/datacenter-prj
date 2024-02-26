@@ -13,8 +13,8 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd ../.. && pwd)"
 
 echo $PROJECT_DIR
 
-export PYTHONPATH="${PROJECT_DIR}/src"
+export PYTHONPATH="${PROJECT_DIR}/project/src"
 source "${PROJECT_DIR}"/.venv/bin/activate
 
-cd "${PROJECT_DIR}"/tests
+cd "${PROJECT_DIR}"/project/tests
 pytest -s

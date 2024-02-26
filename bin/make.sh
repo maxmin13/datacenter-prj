@@ -17,7 +17,7 @@ set +o xtrace
   
 export DATACENTER_PROJECT_DIR
 DATACENTER_PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
-export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/src
+export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/project/src
 
 {
     python -m venv "${DATACENTER_PROJECT_DIR}"/.venv
@@ -28,6 +28,6 @@ export PYTHONPATH="${DATACENTER_PROJECT_DIR}"/src
 echo "Datacenter virtual environment created."
 
 # create vpc, instance, security groups, ...
-python "${DATACENTER_PROJECT_DIR}/src/com/maxmin/aws/startup.py" "${DATACENTER_PROJECT_DIR}/config/datacenter.json" "${DATACENTER_PROJECT_DIR}/config/hostedzone.json"
+python "${DATACENTER_PROJECT_DIR}/project/src/com/maxmin/aws/startup.py" "${DATACENTER_PROJECT_DIR}/config/datacenter.json" "${DATACENTER_PROJECT_DIR}/config/hostedzone.json"
 
 echo "Datacenter created."
