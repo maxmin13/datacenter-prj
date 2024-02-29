@@ -233,5 +233,7 @@ if __name__ == "__main__":
             Logger.info("DNS record created!")
         else:
             Logger.warn("DNS record already created!")
-
+            
     Logger.info("Datacenter created!")
+    Logger.info(instance_config.dns_name)
+    Logger.info(instance.public_ip)    
