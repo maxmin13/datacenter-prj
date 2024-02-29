@@ -75,10 +75,10 @@
         "Keypair": 
             {
                 "Name": "admin-key",
-                "Path": "/home/vagrant/workspace/datacenter-prj/access"
+                "Path": "/home/vagrant/workspace/messageboard-prj/access"
             },
         "ParentImage": "amzn2-ami-kernel-5.10-hvm-2.0.20230719.0-x86_64-gp2",
-        "DnsName": "admin.maxmin.it",
+        "DnsName": "msg.maxmin.it",
         "HostName": "admin.maxmin.it",
         "Tags": [
           {

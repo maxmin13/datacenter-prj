@@ -194,7 +194,7 @@ if __name__ == "__main__":
         instance.load()
 
         if instance.state == "terminated":
-            raise AwsException("The instance is terminated.")
+            raise AwsException("The instance is terminated, you may need to wait a while, or change the instance name in datacenter.json file.")
 
         instance_service = InstanceService()
         instance_service.create_instance(

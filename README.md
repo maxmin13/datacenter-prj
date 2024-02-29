@@ -1,7 +1,9 @@
 # AWS datacenter project
 
 The project creates a datacenter in the AWS cloud.</br>
-The datacenter consists of a VPC, a subnet, one security group, one Linux 2 instance with a DNS record associated.
+The datacenter consists of a VPC, a subnet, one security group, one Linux 2 instance with a DNS record associated.</br>
+The creation of the VPC is done with Python boto3 AWS development kit,</br>
+the provision of the programs in the AWS instance is done with Ansible scripts.
 
 **Requirements:**
 
@@ -31,7 +33,6 @@ edit **datacenter.json** and **hostedzone.json** and set the Vpc and DNS values 
 * admin instance private IP (eg: "PrivateIp": "10.0.20.35")<br>
 * DNS registered domain (your domain registered with the AWS registrar, eg: "RegisteredDomain": "maxmin.it")<br>
 
-
 **Create AWS datacenter and DNS record:**
 
 ```
@@ -44,8 +45,8 @@ sudo chmod -R -x  *.sh
 **Upgrade Openssl, install Python, Postgresql, Nginx:**
 
 ```
-export REMOTE_USER=<remote instance user, eg: awsadmin>
-export REMOTE_USER_PASSWORD=<remote instance user pwd, eg: awsadmin>
+export REMOTE_USER=<remote AWS instance user, eg: awsadmin>
+export REMOTE_USER_PASSWORD=<remote AWS instance user pwd, eg: awsadmin>
 
 cd bin
 
@@ -60,11 +61,11 @@ cd bin
 ./delete.sh
 ```
 
-**Log in the remote instance:**
+**Log in the remote AWS instance:**
 
 ```
-cd access
-rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<remote instance IP address>
+cd datacenter-prj/access
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<remote AWS instance IP address>
 
 ```
 
