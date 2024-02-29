@@ -32,7 +32,7 @@
             "Protocol": "tcp",
             "Cidr": "0.0.0.0/0",
             "Description": "ssh access"
-          },
+          }
         ]
       }
     ],
