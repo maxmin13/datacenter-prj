@@ -21,6 +21,7 @@ from com.maxmin.aws.ec2.service.instance import InstanceService
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
+from com.maxmin.aws.constants import ProjectDirectories
 
 if __name__ == "__main__":
     # datacenter.json
@@ -179,7 +180,7 @@ if __name__ == "__main__":
 
     for instance_config in datacenter_config.instances:
         keypair_config = instance_config.keypair
-        keypair = Keypair(keypair_config.name, keypair_config.path)
+        keypair = Keypair(keypair_config.name, ProjectDirectories.ACCESS_DIR)
 
         if keypair.load() is False:
             keypair.create()

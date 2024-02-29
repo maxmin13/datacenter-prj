@@ -13,6 +13,8 @@ git clone git@github.com:maxmin13/datacenter-prj.git
 
 install eclipse pydev plugin from marketplace.
 
+select pydev perspective
+
 File/New/Project (not PyDev project)
 Choose General/Project, click Next
 Enter a project name
@@ -57,19 +59,14 @@ python -m pip freeze > requirements.txt
 add the interpreter from the virtual environment as another Python interpreter:
 
 Open Preferences
-Go to PyDev/Interpreter - Python interpreter
-Click New, Browse for python/pypy exe
-enter a name, and the path to the executable
-
-/home/vagrant/workspace/datacenter-prj/.venv/bin/python
-
-Choose another name for your interpreter if you want, probably something shorter than the default.  
-I like to use the name of the virtual environment, with "-env" appended.
+Go to PyDev-Interpreter/Grammar - Python interpreter
+Click 'please configure an interpreter before proceeding' link, click 'Manual config', click "New"
+select "Browse for python/pypy exe", click "cancel" to close the browse file window,
+enter a name, and the path to the python executable previously created from the command line, ex:
+/home/vagrant/workspace/datacenter-prj/.venv/bin/python3
+select all libraries
 Click OK
-Now here's the tricky part - a dialog will pop up asking which library folders to add.  
-Keep the defaults but you also need to add your system python library directories 
-- e.g. /usr/lib/python2.6, /usr/lib64/python2.6, and /usr/lib/python2.6/plat-linux.  
-Otherwise PyDev won't be able to find all the libraries your python interpreter will be using.
+set the interpreter for your project to the configured one
 Click OK
 
 Then, set the new interpreter as the interpreter for your project:

@@ -12,6 +12,7 @@ from com.maxmin.aws.ec2.dao.subnet import Subnet
 from com.maxmin.aws.ec2.dao.vpc import Vpc
 from com.maxmin.aws.logs import Logger
 from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
+from com.maxmin.aws.constants import ProjectDirectories
 
 if __name__ == "__main__":
     datacenter_config = DatacenterConfig(sys.argv[1])
@@ -67,7 +68,7 @@ if __name__ == "__main__":
             Logger.warn("Instance already deleted!")
 
         keypair_config = instance_config.keypair
-        keypair = Keypair(keypair_config.name, keypair_config.path)
+        keypair = Keypair(keypair_config.name, ProjectDirectories.ACCESS_DIR)
 
         if keypair.load() is True:
             keypair.delete()
