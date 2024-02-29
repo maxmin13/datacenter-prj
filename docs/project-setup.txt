@@ -20,6 +20,7 @@ Choose General/Project, click Next
 Enter a project name
 Uncheck "use default location" and set the location to the top directory of the datacenter-prj
 Click Finish
+
 Right-click on the project and select PyDev / Set as Pydev Project
 when asked to select Python interpreter, click don't ask again
 Right-click on the project and select Properties
@@ -65,8 +66,6 @@ select "Browse for python/pypy exe", click "cancel" to close the browse file win
 enter a name, and the path to the python executable previously created from the command line, ex:
 /home/vagrant/workspace/datacenter-prj/.venv/bin/python3
 select all libraries
-Click OK
-set the interpreter for your project to the configured one
 Click OK
 
 Then, set the new interpreter as the interpreter for your project:
