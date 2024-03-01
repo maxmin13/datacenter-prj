@@ -69,4 +69,15 @@ rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<remote AWS insta
 
 ```
 
+**Access the test web site:**
+<br><br>
+*https://admin.maxmin.it:8443/index.html*
+
+**Connect to the database server:**
+
+```
+// Install postgreSQL version 4 or above
+// todo
+```
+
 <br>

@@ -68,7 +68,7 @@ if __name__ == "__main__":
         else:
             Logger.warn("Instance already deleted!")
 
-        for tag in instance_config.tags: 
+        for tag in instance_config.tags:
             if tag.get("Key") == "Name":
                 key_name = tag.get("Value")
                 keypair = Keypair(key_name, ProjectDirectories.ACCESS_DIR)

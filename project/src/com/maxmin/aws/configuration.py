@@ -110,7 +110,6 @@ class DatacenterConfig(object):
                 group_config.rules.append(rule_config)
 
         for instance in self._datacenter.get("Instances"):
-
             self.instances.append(
                 InstanceConfig(
                     instance.get("UserName"),
@@ -212,4 +211,3 @@ class InstanceConfig(object):
         self.tags = tags
         self.dns_name = dns_name
         self.host_name = host_name
-

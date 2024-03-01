@@ -179,8 +179,7 @@ if __name__ == "__main__":
     #
 
     for instance_config in datacenter_config.instances:
-        
-        for tag in instance_config.tags: 
+        for tag in instance_config.tags:
             if tag.get("Key") == "Name":
                 key_name = tag.get("Value")
                 keypair = Keypair(key_name, ProjectDirectories.ACCESS_DIR)
@@ -202,7 +201,9 @@ if __name__ == "__main__":
         instance.load()
 
         if instance.state == "terminated":
-            raise AwsException("The instance is terminated, you may need to wait a while, or change the instance name in datacenter.json file.")
+            raise AwsException(
+                "The instance is terminated, you may need to wait a while, or change the instance name in datacenter.json file."
+            )
 
         instance_service = InstanceService()
         instance_service.create_instance(
@@ -240,7 +241,7 @@ if __name__ == "__main__":
             Logger.info("DNS record created!")
         else:
             Logger.warn("DNS record already created!")
-            
+
     Logger.info("Datacenter created!")
     Logger.info(instance_config.dns_name)
-    Logger.info(instance.public_ip)    
+    Logger.info(instance.public_ip)

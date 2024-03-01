@@ -18,7 +18,7 @@ class Keypair(Ec2):
     classdocs
     """
 
-    def __init__(self, name:str, path:str):
+    def __init__(self, name: str, path: str):
         super().__init__()
         self.name = name
         self.path = path
@@ -78,7 +78,7 @@ class Keypair(Ec2):
             self.id = response.get("KeyPairId")
 
             private_key = response.get("KeyMaterial")
-            
+
             private_key_file = os.path.join(self.path, self.name)
             private_key_file_handle = open(private_key_file, "x")
             private_key_file_handle.write(private_key)
