@@ -179,8 +179,15 @@ if __name__ == "__main__":
     #
 
     for instance_config in datacenter_config.instances:
-        keypair_config = instance_config.tags['Name'].value
-        keypair = Keypair(keypair_config.name, ProjectDirectories.ACCESS_DIR)
+        
+        for tag in instance_config.tags: 
+            if tag.get("Key") == "Name":
+                key_name = tag.get("Value")
+                keypair = Keypair(key_name, ProjectDirectories.ACCESS_DIR)
+                break
+
+        if not key_name:
+            raise AwsException("SSH key name not found in configuration.")
 
         if keypair.load() is False:
             keypair.create()

@@ -13,6 +13,7 @@ from com.maxmin.aws.ec2.dao.vpc import Vpc
 from com.maxmin.aws.logs import Logger
 from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
 from com.maxmin.aws.constants import ProjectDirectories
+from com.maxmin.aws.exception import AwsException
 
 if __name__ == "__main__":
     datacenter_config = DatacenterConfig(sys.argv[1])
@@ -67,8 +68,14 @@ if __name__ == "__main__":
         else:
             Logger.warn("Instance already deleted!")
 
-        keypair_config = instance_config.keypair
-        keypair = Keypair(keypair_config.name, ProjectDirectories.ACCESS_DIR)
+        for tag in instance_config.tags: 
+            if tag.get("Key") == "Name":
+                key_name = tag.get("Value")
+                keypair = Keypair(key_name, ProjectDirectories.ACCESS_DIR)
+                break
+
+        if not key_name:
+            raise AwsException("SSH key name not found in configuration.")
 
         if keypair.load() is True:
             keypair.delete()

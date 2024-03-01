@@ -113,7 +113,6 @@ class DatacenterConfig(object):
 
             self.instances.append(
                 InstanceConfig(
-                    instance.get("Name"),
                     instance.get("UserName"),
                     instance.get("UserPassword"),
                     instance.get("PrivateIp"),
@@ -192,26 +191,22 @@ class SgpRuleConfig(object):
 class InstanceConfig(object):
     def __init__(
         self,
-        name,
         username,
         password,
         private_ip,
         security_group,
         subnet,
-        keypair,
         parent_img,
         target_img,
         tags,
         dns_name,
         host_name,
     ):
-        self.name = name
         self.username = username
         self.password = password
         self.private_ip = private_ip
         self.security_group = security_group
         self.subnet = subnet
-        self.keypair = keypair
         self.parent_img = parent_img
         self.target_img = target_img
         self.tags = tags

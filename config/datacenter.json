@@ -48,7 +48,6 @@
         "HostName": "admin.maxmin.it",
         "Tags": [
           {
-            "__description_": "tag Name is unique for each AWS instance.",  
             "Key": "Name",
             "Value": "admin-box"
           },

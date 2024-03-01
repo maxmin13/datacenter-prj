@@ -88,7 +88,7 @@ cd project/tests
 python -m pytest .
 
 ###################################
-# Run the tests in eclipse:
+# Run the tests in Eclipse:
 ###################################
 
 Open Preferences
@@ -101,10 +101,23 @@ in the run configuration of test_instance.py and test_ssh.py, Environment tab, a
 right click on the test file, run as, Python unit-tests
 
 ###################################
+# Run the project in Eclipse:
+###################################
+
+tdx on startup.py or shutdown.py
+Run As, Run Configurations, 
+select Argument tab,
+in Program Arguments box enter:
+/home/vagrant/workspace/datacenter-prj/config/datacenter.json /home/vagrant/workspace/datacenter-prj/config/hostedzone.json
+
+select Environment tab:
+create a variable with name DATACENTER_PROJECT_DIR and value /home/vagrant/workspace/datacenter-prj
+
+###################################
 # AWS credentials:
 ###################################
 
-configure aws credentials:
+configure AWS credentials:
 
 aws configure
 
