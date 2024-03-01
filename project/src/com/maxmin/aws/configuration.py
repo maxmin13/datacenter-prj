@@ -12,7 +12,7 @@ from com.maxmin.aws.exception import AwsException
 
 class HostedZoneConfig(object):
     """
-    Loads a Json file into a configuration object.
+    Loads a JSON file into a configuration object.
     """
 
     def __init__(self, config_file):
@@ -28,7 +28,7 @@ class HostedZoneConfig(object):
         try:
             self._hosted_zone = json.loads(content).get("HostedZone")
         except JSONDecodeError:
-            raise AwsException("Invalid Json file!")
+            raise AwsException("Invalid JSON file!")
 
         self.description = self._hosted_zone.get("Description")
         self.registered_domain = self._hosted_zone.get("RegisteredDomain")
@@ -36,7 +36,7 @@ class HostedZoneConfig(object):
 
 class DatacenterConfig(object):
     """
-    Loads a Json file into a configuration object.
+    Loads a JSON file into a configuration object.
     """
 
     def __init__(self, config_file):
@@ -55,7 +55,7 @@ class DatacenterConfig(object):
         try:
             self._datacenter = json.loads(content).get("Datacenter")
         except JSONDecodeError:
-            raise AwsException("Invalid Json file!")
+            raise AwsException("Invalid JSON file!")
 
         self.vpc = VpcConfig(
             self._datacenter.get("Name"),
@@ -110,10 +110,6 @@ class DatacenterConfig(object):
                 group_config.rules.append(rule_config)
 
         for instance in self._datacenter.get("Instances"):
-            
-            name = instance.get("Keypair").get("Name")
-            path = instance.get("Keypair").get("Path")
-            keypair = KeyPairConfig(name, path)
 
             self.instances.append(
                 InstanceConfig(
@@ -123,7 +119,6 @@ class DatacenterConfig(object):
                     instance.get("PrivateIp"),
                     instance.get("SecurityGroup"),
                     instance.get("Subnet"),
-                    keypair,
                     instance.get("ParentImage"),
                     instance.get("TargetImage"),
                     instance.get("Tags"),
@@ -223,12 +218,3 @@ class InstanceConfig(object):
         self.dns_name = dns_name
         self.host_name = host_name
 
-
-class KeyPairConfig(object):
-    def __init__(
-        self,
-        name,
-        path,
-    ):
-        self.name = name
-        self.path = path
