@@ -179,7 +179,7 @@ if __name__ == "__main__":
     #
 
     for instance_config in datacenter_config.instances:
-        keypair_config = instance_config.keypair
+        keypair_config = instance_config.tags['Name'].value
         keypair = Keypair(keypair_config.name, ProjectDirectories.ACCESS_DIR)
 
         if keypair.load() is False:

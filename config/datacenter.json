@@ -38,21 +38,17 @@
     ],
     "Instances": [
       {
-        "Name": "admin",
         "UserName": "awsadmin",
         "UserPassword": "awsadmin",
         "PrivateIp": "10.0.20.35",
         "SecurityGroup": "admin-sgp",
         "Subnet": "admin-subnet",
-        "Keypair": 
-            {
-                "Name": "admin-key"
-            },
         "ParentImage": "amzn2-ami-kernel-5.10-hvm-2.0.20230719.0-x86_64-gp2",
         "DnsName": "admin.maxmin.it",
         "HostName": "admin.maxmin.it",
         "Tags": [
           {
+            "__description_": "tag Name is unique for each AWS instance.",  
             "Key": "Name",
             "Value": "admin-box"
           },
