@@ -6,17 +6,15 @@
   vars_files:
     - variables/vars.yml
     - variables/provision.yml
-    - "{{ lookup('ansible.builtin.env', 'DATACENTER_PROJECT_DIR') }}/config/datacenter.json"
  
   pre_tasks:
   
     - name: 'Controller host configuration'
       ansible.builtin.debug:
         msg:
-        - "domain: {{ instance_dns_domain }}"
         - "ssh port: {{ ansible_port }}"
         - "ssh user: {{ ansible_user }}"
-        - "ssh key: {{ ansible_private_key_file }}"  
+        - "ssh key: {{ ansible_private_key_file }}"    
       
 #    - name: Upgrade all packages
 #      become: true
@@ -88,7 +86,7 @@
                 
     - ansible.builtin.assert: 
         that: 
-          - "'{{ aws.instance.python.version }}' in '{{ python_ver.stdout }}'"      
+          - "aws.instance.python.version in python_ver.stdout"      
       
   post_tasks:
   

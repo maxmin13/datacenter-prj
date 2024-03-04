@@ -2,7 +2,7 @@
 
 systemctl status postgresql
 
-#### connect to the database
+#### connect to the server
 
 sudo su postgres
 cd ~postgres

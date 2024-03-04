@@ -1,7 +1,8 @@
 
-admin_instance: "{{ (Datacenter.Instances  | selectattr('Name', '==', 'admin'))[0] }}"
+instance_name: "admin-box"
+project_dir: "{{ lookup('env','DATACENTER_PROJECT_DIR') }}"
 
-instance_dns_domain: "{{ admin_instance.DnsName }}"
-ansible_ssh_private_key_file: "{{ admin_instance.Keypair.Path }}/{{ admin_instance.Keypair.Name }}"
-
-
+ansible_ssh_private_key_file: "{{ project_dir }}/access/{{ instance_name }}"
+ansible_user: "{{ lookup('env','REMOTE_USER') }}" 
+ansible_password: "{{ lookup('env','REMOTE_USER_PASSWORD') }}"
+ansible_sudo_pass: "{{ lookup('env','REMOTE_USER_PASSWORD') }}"

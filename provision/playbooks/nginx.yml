@@ -2,36 +2,34 @@
   hosts:
     - webserver_nginx
     
-  gather_facts: true
-  
+  gather_facts: false
+    
   vars_files:
     - variables/vars.yml
     - variables/provision.yml
-    - "{{ lookup('ansible.builtin.env', 'DATACENTER_PROJECT_DIR') }}/config/datacenter.json"
-          
+
   pre_tasks:
   
+    - name: 'Get datacenter.json content'
+      set_fact:
+        datacenter_config: "{{ lookup('file', '{{ project_dir }}/config/datacenter.json') | from_json }}"
+        
+    - name: 'Get Nginx certificate domain'
+      set_fact:
+        instance_dns_domain: "{{ datacenter_config | json_query(jquery) }}"
+      vars:
+        jquery: "Datacenter.Instances[?Tags[?Key=='Name' && Value=='{{ instance_name }}' ]] | [0].DnsName"    
+
     - name: 'Controller host configuration'
       ansible.builtin.debug:
         msg:
-        - "domain: {{ instance_dns_domain }}"
+        - "instance_dns_domain: {{ instance_dns_domain }}"
         - "ssh port: {{ ansible_port }}"
         - "ssh user: {{ ansible_user }}"
         - "ssh key: {{ ansible_private_key_file }}"  
-      
-    - name: 'Remote host'
-      ansible.builtin.debug:
-        msg: 
-        - "os_family: {{ ansible_facts.os_family }}"
-        - "distro: {{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }}"
-        - "kernel: {{ ansible_facts.kernel }}"      
-
-#    - name: Upgrade all packages
-#      become: true
-#      ansible.builtin.yum: name=* state=latest  
-             
+        
   tasks:
-                     
+  
     - name: Ensure Nginx is installed
       become: true
       ansible.builtin.package:
@@ -99,6 +97,7 @@
         validate_certs: false
         return_content: true
       register: result
-      failed_when: "'Running on ' not in result.content"   
+      failed_when: "'Running on ' not in result.content"  
+      
 ...
       

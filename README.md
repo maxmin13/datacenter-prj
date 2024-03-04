@@ -2,8 +2,8 @@
 
 The project creates a datacenter in the AWS cloud.</br>
 The datacenter consists of a VPC, a subnet, one security group, one Linux 2 instance with a DNS record associated.</br>
-The creation of the VPC is done with Python boto3 AWS development kit,</br>
-the provision of the programs in the AWS instance is done with Ansible scripts.
+The creation of the VPC is done with Python boto3 AWS development kit.</br>
+Ansible scripts update OpenSSL to version 1.1.1u, install Python 3.11.4, Postgresql server, Nginx with a demo page.</br>
 
 **Requirements:**
 
@@ -65,19 +65,31 @@ cd bin
 
 ```
 cd datacenter-prj/access
-rm -f ~/.ssh/known_hosts && ssh -v -i admin-key -p 22 awsadmin@<remote AWS instance IP address>
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 awsadmin@<remote AWS instance IP address>
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 admin.maxmin.it
 
 ```
 
 **Access the test web site:**
 <br><br>
+*http://admin.maxmin.it:8080/index.html*
+<br>
 *https://admin.maxmin.it:8443/index.html*
 
 **Connect to the database server:**
 
 ```
 // Install postgreSQL version 4 or above
-// todo
+
+psql -h admin.maxmin.it -p 5432 -U postgres postgresdb
+
+#### check all currently active users:
+
+\du
+
+#### exit:	
+
+\q
 ```
 
 <br>

@@ -1,9 +1,9 @@
 
 ##################################
-cd /home/vagrant/python_venv
-source bin/activate
 
+source .env/bin/activate
 cd workspace/datacenter-prj/provision
+
 ##################################
 
 # pipreqs module. It is used to scan your imports and build a Python requirements file for you.

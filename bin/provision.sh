@@ -7,12 +7,16 @@ set -o nounset
 set +o xtrace
 
 #########################################################################
-## Provisions an AWS datacenter.
+## The script creates and provisions a new AWS datacenter using Ansible.
+## Ansible connects to the instances with SSH connection plugin.
+## Ansible uses Dynamic inventory plugin aws_ec2 to create a dynamic 
+## inventory of the AWS instances.
+## see: ansible.cfg file, ransport=ssh, enable_plugins = aws_ec2
 ##
 ## run:
 ##
-## export REMOTE_USER=<remote instance user, eg: awsadmin>
-## export REMOTE_USER_PASSWORD=<remote instance user pwd, eg: awsadmin>
+## export REMOTE_USER=<remote AWS instance user, eg: awsadmin>
+## export REMOTE_USER_PASSWORD=<remote AWS instance user pwd, eg: awsadmin>
 ##
 ## ./provision.sh 
 ##
@@ -30,23 +34,28 @@ then
   exit 1
 fi
 
-WORKSPACE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd ../.. && pwd)"
-export DATACENTER_PROJECT_DIR="${WORKSPACE_DIR}"/datacenter-prj
+export DATACENTER_PROJECT_DIR
+DATACENTER_PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+{
+    python -m venv "${DATACENTER_PROJECT_DIR}"/.venv
+    source "${DATACENTER_PROJECT_DIR}"/.venv/bin/activate
+    python3 -m pip install -r "${DATACENTER_PROJECT_DIR}"/requirements.txt
+} > /dev/null
 
 ANSIBLE_PLAYBOOK_CMD="${DATACENTER_PROJECT_DIR}"/.venv/bin/ansible-playbook
+
+cd "${DATACENTER_PROJECT_DIR}"/provision || exit
 
 ########################
 ##### UPDATE SYSTEM ####
 ########################
 
-echo "Upgrading instance ..."
+echo "Upgrading instances ..."
 
-cd "${DATACENTER_PROJECT_DIR}"/provision || exit
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/upgrade.yml 
 
-"${ANSIBLE_PLAYBOOK_CMD}" playbooks/upgrade.yml \
-    --extra-vars "ansible_user=${REMOTE_USER} ansible_password=${REMOTE_USER_PASSWORD} ansible_sudo_pass=${REMOTE_USER_PASSWORD}"
-
-echo "Instance upgraded."
+echo "Instances upgraded."
 
 ##################
 ##### OPENSSL ####
@@ -54,8 +63,7 @@ echo "Instance upgraded."
 
 echo "Upgrading Openssl ..."
 
-"${ANSIBLE_PLAYBOOK_CMD}" playbooks/openssl.yml --extra-vars "ansible_user=${REMOTE_USER} \
-    ansible_password=${REMOTE_USER_PASSWORD} ansible_sudo_pass=${REMOTE_USER_PASSWORD}"
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/openssl.yml 
 
 echo "Openssl upgraded."
 
@@ -65,8 +73,7 @@ echo "Openssl upgraded."
 
 echo "Installing new Python version ..."
 
-"${ANSIBLE_PLAYBOOK_CMD}" playbooks/python.yml \
-    --extra-vars "ansible_user=${REMOTE_USER} ansible_password=${REMOTE_USER_PASSWORD} ansible_sudo_pass=${REMOTE_USER_PASSWORD}"
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/python.yml 
 
 echo "Python installed."
 
@@ -76,8 +83,7 @@ echo "Python installed."
 
 echo "Installing Postgresql ..."
 
-"${ANSIBLE_PLAYBOOK_CMD}" playbooks/postgresql.yml \
-    --extra-vars "ansible_user=${REMOTE_USER} ansible_password=${REMOTE_USER_PASSWORD} ansible_sudo_pass=${REMOTE_USER_PASSWORD}"
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/postgresql.yml 
 
 echo "Postgresql installed."
 
@@ -87,8 +93,8 @@ echo "Postgresql installed."
 
 echo "Installing Nginx ..."
 
-"${ANSIBLE_PLAYBOOK_CMD}" playbooks/nginx.yml \
-    --extra-vars "ansible_user=${REMOTE_USER} ansible_password=${REMOTE_USER_PASSWORD} ansible_sudo_pass=${REMOTE_USER_PASSWORD}"
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/nginx.yml 
 
 echo "Nginx installed."
+
 echo "Datacenter provisioned."

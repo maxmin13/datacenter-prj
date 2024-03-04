@@ -25,7 +25,7 @@ if __name__ == "__main__":
     vpc_found = vpc.load()
 
     if vpc_found is False:
-        Logger.warn("Vpc not found!")
+        Logger.warn("VPC not found!")
 
     #
     # Delete the instances
