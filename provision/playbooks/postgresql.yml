@@ -72,7 +72,7 @@
       ansible.builtin.service:
         name: postgresql-14
         state: started
-        enabled: true
+        enabled: true 
       
     - name: 'Allow remote connection'
       become: true

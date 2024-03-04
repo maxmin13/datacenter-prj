@@ -1,12 +1,12 @@
 
 
-systemctl status postgresql
+systemctl status postgresql-14.service 
 
 #### connect to the server
 
 sudo su postgres
 cd ~postgres
-psql -U postgres -d postgresdb
+psql -U postgres
 
 #### print all available commands:
 

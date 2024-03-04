@@ -3,7 +3,7 @@
 The project creates a datacenter in the AWS cloud.</br>
 The datacenter consists of a VPC, a subnet, one security group, one Linux 2 instance with a DNS record associated.</br>
 The creation of the VPC is done with Python boto3 AWS development kit.</br>
-Ansible scripts update OpenSSL to version 1.1.1u, install Python 3.11.4, Postgresql server, Nginx with a demo page.</br>
+Ansible scripts update OpenSSL to version 1.1.1u, install Python 3.11.4, PostgreSQL server, Nginx with a demo page.</br>
 
 **Requirements:**
 
@@ -42,7 +42,7 @@ sudo chmod -R -x  *.sh
 
 ```
 
-**Upgrade Openssl, install Python, Postgresql, Nginx:**
+**Upgrade Openssl, install Python, PostgreSQL, Nginx:**
 
 ```
 export REMOTE_USER=<remote AWS instance user, eg: awsadmin>
@@ -66,8 +66,6 @@ cd bin
 ```
 cd datacenter-prj/access
 rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 awsadmin@<remote AWS instance IP address>
-rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 admin.maxmin.it
-
 ```
 
 **Access the test web site:**
@@ -79,17 +77,24 @@ rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 admin.maxmin.it
 **Connect to the database server:**
 
 ```
-// Install postgreSQL version 4 or above
+// log into the remote instance
+cd datacenter-prj/access
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 awsadmin@<remote AWS instance IP address>
 
-psql -h admin.maxmin.it -p 5432 -U postgres postgresdb
+// log into the PostgreSQL server
+sudo su postgres
+cd ~postgres
+psql -U postgres
 
-#### check all currently active users:
-
+// check all currently active users:
 \du
 
-#### exit:	
+// list all databases
+\l
 
+// exit 	
 \q
+
 ```
 
 <br>

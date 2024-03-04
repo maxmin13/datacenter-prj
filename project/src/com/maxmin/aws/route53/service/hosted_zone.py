@@ -15,7 +15,6 @@ class HostedZoneService(object):
         self,
         registered_domain: str,
         dns_name: str,
-        public_ip: str,
     ) -> bool:
         """
         Checks if a DNS record exists in the hosted zone.

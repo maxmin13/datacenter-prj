@@ -91,7 +91,7 @@ python -m pytest .
 # Run the tests in Eclipse:
 ###################################
 
-Open Preferences
+Open Window, Preferences
 Go to PyDev/PyUnit
 
 set Test Runner as Py.test runner
