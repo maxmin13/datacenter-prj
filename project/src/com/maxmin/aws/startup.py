@@ -228,7 +228,6 @@ if __name__ == "__main__":
             hosted_zone_service.check_record_exists(
                 hostedzone_config.registered_domain,
                 instance_config.dns_name,
-                instance.public_ip,
             )
             is False
         ):
