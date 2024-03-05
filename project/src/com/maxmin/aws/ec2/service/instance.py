@@ -88,3 +88,20 @@ class InstanceService(object):
         except Exception as e:
             Logger.error(str(e))
             raise AwsException("Error creating the instance!")
+
+    def stop_instance(self) -> None:
+        """
+        Stops the instance and waits until the shutdown is completed.
+        """
+        try:
+            self.ec2.stop_instances(
+                InstanceIds=[
+                    self.id,
+                ],
+            )
+        except Exception as e:
+            Logger.error(str(e))
+            raise AwsException("Error stopping the instance!")
+
+        waiter = self.ec2.get_waiter("instance_stopped")
+        waiter.wait(InstanceIds=[self.id])

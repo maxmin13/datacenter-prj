@@ -20,8 +20,9 @@ from com.maxmin.aws.ec2.dao.vpc import Vpc
 from com.maxmin.aws.ec2.service.instance import InstanceService
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
-from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
 from com.maxmin.aws.constants import ProjectDirectories
+from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
+from com.maxmin.aws.route53.dao.record import Record
 
 if __name__ == "__main__":
     # datacenter.json
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     # hostedzone.json
     hostedzone_config = HostedZoneConfig(sys.argv[2])
 
-    Logger.info("Creating datacenter ...")
+    Logger.info("Creating data center ...")
 
     #
     # Create the vpc
@@ -41,9 +42,9 @@ if __name__ == "__main__":
     if vpc.load() is False:
         vpc.create(datacenter_config.vpc.cidr)
 
-        Logger.info("Vpc created!")
+        Logger.info("VPC created!")
     else:
-        Logger.warn("Vpc already created!")
+        Logger.warn("VPC already created!")
 
     vpc.load()
 
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
         Logger.info("Internet gateway attached to the vpc!")
     else:
-        Logger.warn("The internet gateway is already attached to the vpc!")
+        Logger.warn("The Internet gateway is already attached to the vpc!")
 
     #
     # Create the route table
@@ -168,9 +169,9 @@ if __name__ == "__main__":
                             rule_config.description,
                         )
 
-                        Logger.info("Sgp rule created!")
+                        Logger.info("Security Group rule created!")
                     else:
-                        Logger.warn("Sgp rule already created!")
+                        Logger.warn("Security Group rule already created!")
         else:
             Logger.warn("Security group already created!")
 
@@ -191,11 +192,11 @@ if __name__ == "__main__":
         if keypair.load() is False:
             keypair.create()
 
-            Logger.info("Keypair created!")
+            Logger.info("Key pair created!")
 
             keypair.load()
         else:
-            Logger.warn("Keypair already created!")
+            Logger.warn("Key pair already created!")
 
         instance = Instance(instance_config.tags)
         instance.load()
@@ -218,29 +219,36 @@ if __name__ == "__main__":
             instance_config.host_name,
         )
 
-        instance.load()
-
-        Logger.info("Creating DNS record ...")
-
-        hosted_zone_service = HostedZoneService()
-
         if (
-            hosted_zone_service.check_record_exists(
-                hostedzone_config.registered_domain,
-                instance_config.dns_name,
-            )
-            is False
+            not hostedzone_config.registered_domain
+            or not instance_config.dns_domain
         ):
-            hosted_zone_service.create_record(
-                hostedzone_config.registered_domain,
-                instance_config.dns_name,
-                instance.public_ip,
-            )
-
-            Logger.info("DNS record created!")
+            Logger.warn("Incomplete DNS data configuration!")
         else:
-            Logger.warn("DNS record already created!")
+            try:
+                hosted_zone = HostedZone(hostedzone_config.registered_domain)
+                if hosted_zone.load() is False:
+                    Logger.warn("DNS Hosted zone doesn't exist!")
+                else:
+                    record = Record(instance_config.dns_domain, hosted_zone.id)
+                    if record.load() is False:
+                        Logger.info("DNS record doesn't exists, creating ...")
 
-    Logger.info("Datacenter created!")
-    Logger.info(instance_config.dns_name)
+                        record = Record(
+                            instance_config.dns_domain, hosted_zone.id
+                        )
+                        record.create(instance.public_ip)
+
+                        Logger.info("DNS record created!")
+                    else:
+                        Logger.warn("DNS record already created!")
+
+            except Exception as e:
+                Logger.warn(str(e))
+
+    Logger.info("Data center created!")
+
+    if not instance_config.dns_domain:
+        Logger.info(instance_config.dns_domain)
+
     Logger.info(instance.public_ip)

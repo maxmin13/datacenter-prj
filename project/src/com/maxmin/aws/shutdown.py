@@ -11,15 +11,16 @@ from com.maxmin.aws.ec2.dao.ssh import Keypair
 from com.maxmin.aws.ec2.dao.subnet import Subnet
 from com.maxmin.aws.ec2.dao.vpc import Vpc
 from com.maxmin.aws.logs import Logger
-from com.maxmin.aws.route53.service.hosted_zone import HostedZoneService
 from com.maxmin.aws.constants import ProjectDirectories
 from com.maxmin.aws.exception import AwsException
+from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
+from com.maxmin.aws.route53.dao.record import Record
 
 if __name__ == "__main__":
     datacenter_config = DatacenterConfig(sys.argv[1])
     hostedzone_config = HostedZoneConfig(sys.argv[2])
 
-    Logger.info("Deleting datacenter ...")
+    Logger.info("Deleting data center ...")
 
     vpc = Vpc(datacenter_config.vpc.name)
     vpc_found = vpc.load()
@@ -36,26 +37,30 @@ if __name__ == "__main__":
 
         found_instance = instance.load()
 
-        Logger.info("Deleting DNS record ...")
-
-        hosted_zone_service = HostedZoneService()
-
         if (
-            hosted_zone_service.check_record_exists(
-                hostedzone_config.registered_domain,
-                instance_config.dns_name,
-            )
-            is True
+            not hostedzone_config.registered_domain
+            or not instance_config.dns_domain
         ):
-            hosted_zone_service.delete_record(
-                hostedzone_config.registered_domain,
-                instance_config.dns_name,
-                instance.public_ip,
-            )
-
-            Logger.info("DNS record successfully deleted!")
+            Logger.warn("Incomplete DNS data configuration!")
         else:
-            Logger.warn("DNS record already deleted!")
+            try:
+                hosted_zone = HostedZone(hostedzone_config.registered_domain)
+                if hosted_zone.load() is False:
+                    Logger.warn("DNS Hosted zone doesn't exist!")
+                else:
+                    record = Record(instance_config.dns_domain, hosted_zone.id)
+                    if record.load() is False:
+                        Logger.warn("DNS record already deleted!")
+                    else:
+                        record = Record(
+                            instance_config.dns_domain, hosted_zone.id
+                        )
+                        record.delete(instance.public_ip)
+
+                        Logger.info("DNS record deleted!")
+
+            except Exception as e:
+                Logger.warn(str(e))
 
         if found_instance is True and instance.state != "terminated":
             Logger.info("Deleting instance ...")

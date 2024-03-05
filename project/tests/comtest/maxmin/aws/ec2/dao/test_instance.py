@@ -175,9 +175,3 @@ def test_load_instance(instance, test_utils):
 def test_load_instance_not_found(instance):
     assert instance.load() is False
 
-
-"""
-TODO
-@mock_ec2
-def test_stop_instance(instance, test_utils): 
-"""

@@ -5,7 +5,7 @@ Created on Mar 15, 2023
 """
 
 
-class AwsException(BaseException):
+class AwsException(Exception):
     """
     Customized project exception.
     """

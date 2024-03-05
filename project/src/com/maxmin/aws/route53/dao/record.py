@@ -15,10 +15,10 @@ class Record(Route53):
     classdocs
     """
 
-    def __init__(self, dns_name: str, hosted_zone_id: str):
+    def __init__(self, domain: str, hosted_zone_id: str):
         super().__init__()
         self.hosted_zone_id = hosted_zone_id
-        self.dns_name = dns_name
+        self.domain = domain
         self.ip_address = None
         self.type = None
 
@@ -32,11 +32,13 @@ class Record(Route53):
             HostedZoneId=self.hosted_zone_id
         ).get("ResourceRecordSets")
 
-        p = re.compile(self.dns_name + "[.]?")
+        fqdn_pattern = re.compile(
+            self.domain + "[.]?"
+        )  # fully qualified domain name
 
         if len(records) > 0:
             for record in records:
-                if p.match(record.get("Name")):
+                if fqdn_pattern.match(record.get("Name")):
                     self.type = record.get("Type")
                     self.ip_address = record.get("ResourceRecords")[0].get(
                         "Value"
@@ -64,7 +66,7 @@ class Record(Route53):
                             {
                                 "Action": "CREATE",
                                 "ResourceRecordSet": {
-                                    "Name": self.dns_name,
+                                    "Name": self.domain,
                                     "Type": "A",
                                     "TTL": 300,
                                     "ResourceRecords": [{"Value": ip_address}],
@@ -96,7 +98,7 @@ class Record(Route53):
                         {
                             "Action": "DELETE",
                             "ResourceRecordSet": {
-                                "Name": self.dns_name,
+                                "Name": self.domain,
                                 "Type": "A",
                                 "TTL": 300,
                                 "ResourceRecords": [{"Value": ip_address}],

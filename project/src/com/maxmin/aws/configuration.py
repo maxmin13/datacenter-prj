@@ -31,6 +31,7 @@ class HostedZoneConfig(object):
             raise AwsException("Invalid JSON file!")
 
         self.description = self._hosted_zone.get("Description")
+        # fully qualified domain name, must have a trailing dot.
         self.registered_domain = self._hosted_zone.get("RegisteredDomain")
 
 
@@ -120,7 +121,7 @@ class DatacenterConfig(object):
                     instance.get("ParentImage"),
                     instance.get("TargetImage"),
                     instance.get("Tags"),
-                    instance.get("DnsName"),
+                    instance.get("DnsDomain"),
                     instance.get("HostName"),
                 )
             )
@@ -198,7 +199,7 @@ class InstanceConfig(object):
         parent_img,
         target_img,
         tags,
-        dns_name,
+        dns_domain,
         host_name,
     ):
         self.username = username
@@ -209,5 +210,5 @@ class InstanceConfig(object):
         self.parent_img = parent_img
         self.target_img = target_img
         self.tags = tags
-        self.dns_name = dns_name
+        self.dns_domain = dns_domain
         self.host_name = host_name
