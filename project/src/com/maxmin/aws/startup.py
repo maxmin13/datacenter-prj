@@ -249,6 +249,6 @@ if __name__ == "__main__":
     Logger.info("Data center created!")
 
     if instance_config.dns_domain:
-        Logger.info(instance_config.dns_domain)
+        Logger.info("Instance DNS name: " + instance_config.dns_domain)
 
-    Logger.info(instance.public_ip)
+    Logger.info("Instance IP address: " + instance.public_ip)
