@@ -9,7 +9,7 @@ from _pytest.outcomes import fail
 from moto import mock_ec2
 import pytest
 
-from com.maxmin.aws.ec2.dao.security_group import (
+from com.maxmin.aws.ec2.dao.security_group_dao import (
     SecurityGroup,
     CidrRule,
     SgpRule,

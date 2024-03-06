@@ -9,7 +9,7 @@ from _pytest.outcomes import fail
 from moto import mock_ec2
 import pytest
 
-from com.maxmin.aws.ec2.dao.vpc import Vpc
+from com.maxmin.aws.ec2.dao.vpc_dao import Vpc
 from com.maxmin.aws.exception import AwsException
 from comtest.maxmin.utils import TestUtils
 

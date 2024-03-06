@@ -11,7 +11,7 @@ from pytest import fail
 import pytest
 
 from com.maxmin.aws.constants import ProjectDirectories
-from com.maxmin.aws.ec2.dao.ssh import Keypair
+from com.maxmin.aws.ec2.dao.ssh_dao import Keypair
 from com.maxmin.aws.exception import AwsException
 from comtest.maxmin.utils import TestUtils
 

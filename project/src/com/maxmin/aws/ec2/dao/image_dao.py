@@ -3,12 +3,12 @@ Created on Mar 27, 2023
 
 @author: vagrant
 """
-from com.maxmin.aws.client import Ec2
+from com.maxmin.aws.client import Ec2Dao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
 
-class Image(Ec2):
+class ImageDao(Ec2Dao):
     """
     Describes an image (AMI) available in AWS.
     """

@@ -3,21 +3,23 @@ Created on Mar 26, 2023
 
 @author: vagrant
 """
-from com.maxmin.aws.client import Ec2
+from com.maxmin.aws.client import Ec2Dao
 from com.maxmin.aws.constants import Ec2Constants
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
+from com.maxmin.aws.ec2.domain.tag import Tag
+import json
 
-
-class Instance(Ec2):
+class InstanceDao(Ec2Dao):
     """
     classdocs
     """
 
-    def __init__(self, tags: list):
+    def __init__(self, name: str):
         super().__init__()
 
         self.id = None
+        self.name = name
         self.state = None
         self.az = None
         self.private_ip = None
@@ -27,24 +29,20 @@ class Instance(Ec2):
         self.subnet_id = None
         self.image_id = None
         self.vpc_id = None
-        self.tags = tags
+        self.tags = []
+        self.dns_domain = None
 
     def load(self) -> bool:
         """
         Loads the instance data, throws an error if more than 1 is found with the same Tag Name,
         returns True if an instance is found, False otherwise.
         """
-
-        tags = list(filter(lambda tag: tag.get("Key") == "Name", self.tags))
-
-        if len(tags) != 1:
-            raise AwsException("Wrong tag Name!")
-
+        
         response = self.ec2.describe_instances(
             Filters=[
                 {
                     "Name": "tag-value",
-                    "Values": [tags[0].get("Value")],
+                    "Values": [self.name],
                 },
             ],
         ).get("Reservations")
@@ -58,7 +56,7 @@ class Instance(Ec2):
 
         if len(instances) > 1:
             # do not allow more instance with the same tag Name.
-            raise AwsException("Found more than 1 instance!")
+            raise AwsException("Found more than 1 instance with the same name!")
 
         if len(instances) == 0:
             return False
@@ -75,7 +73,10 @@ class Instance(Ec2):
             self.subnet_id = instances[0].get("SubnetId")
             self.vpc_id = instances[0].get("VpcId")
             self.image_id = instances[0].get("ImageId")
-            self.tags = instances[0].get("Tags")
+            
+            for tag in instances[0].get("Tags"):
+                tag = Tag(tag.get("Key"), tag.get("Value"))
+                self.tags.append(tag)
 
             return True
 
@@ -100,8 +101,13 @@ class Instance(Ec2):
             raise AwsException("Instance already created!")
 
         ec2_constants = Ec2Constants()
-
-        tag_specifications = [{"ResourceType": "instance", "Tags": tags}]
+        tag_specifications = [{
+                                "ResourceType": "instance", 
+                                "Tags": []
+                            }]
+        
+        for tag_config in tags:
+            tag_specifications[0]['Tags'].append(tag_config.to_dictionary())
 
         try:
             self.id = (

@@ -9,7 +9,7 @@ from _pytest.outcomes import fail
 from moto import mock_ec2
 import pytest
 
-from com.maxmin.aws.ec2.dao.subnet import Subnet
+from com.maxmin.aws.ec2.dao.subnet_dao import Subnet
 from com.maxmin.aws.exception import AwsException
 from comtest.maxmin.utils import TestUtils
 

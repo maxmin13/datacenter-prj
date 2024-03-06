@@ -8,7 +8,7 @@ from _pytest.outcomes import fail
 from moto import mock_ec2
 import pytest
 
-from com.maxmin.aws.ec2.dao.internet_gateway import InternetGateway
+from com.maxmin.aws.ec2.dao.internet_gateway_dao import InternetGateway
 from com.maxmin.aws.exception import AwsException
 from comtest.maxmin.utils import TestUtils
 

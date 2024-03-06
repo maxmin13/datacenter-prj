@@ -5,10 +5,10 @@ Created on Apr 10, 2023
 """
 import re
 
-from com.maxmin.aws.client import Route53
+from com.maxmin.aws.client import Route53Dao
 
 
-class HostedZone(Route53):
+class HostedZoneDao(Route53Dao):
     """
     classdocs
     """

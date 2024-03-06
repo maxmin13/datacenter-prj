@@ -7,12 +7,12 @@ from abc import abstractmethod
 
 from botocore.exceptions import ClientError
 
-from com.maxmin.aws.client import Ec2
+from com.maxmin.aws.client import Ec2Dao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
 
-class SecurityGroup(Ec2):
+class SecurityGroupDao(Ec2Dao):
     """
     Class that represents an AWS security group.
     """
@@ -96,7 +96,7 @@ class SecurityGroup(Ec2):
             raise AwsException("Error deleting the security group!")
 
 
-class AbstractRule(Ec2):
+class AbstractRuleDao(Ec2Dao):
     def __init__(self, security_group_id: str):
         """
         Constructor
@@ -142,7 +142,7 @@ class AbstractRule(Ec2):
         return rules
 
 
-class CidrRule(AbstractRule):
+class CidrRuleDao(AbstractRuleDao):
     """
     Class that represents an AWS security group rule based on CIDR.
     """
@@ -270,7 +270,7 @@ class CidrRule(AbstractRule):
             raise AwsException("Error revoking access from cidr!")
 
 
-class SgpRule(AbstractRule):
+class SgpRuleDao(AbstractRuleDao):
     """
     Class that represents an AWS security group rule based on security group id.
     """

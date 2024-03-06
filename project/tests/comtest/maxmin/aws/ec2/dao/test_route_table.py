@@ -7,7 +7,7 @@ from _pytest.outcomes import fail
 from moto import mock_ec2
 import pytest
 
-from com.maxmin.aws.ec2.dao.route_table import RouteTable
+from com.maxmin.aws.ec2.dao.route_table_dao import RouteTable
 from com.maxmin.aws.exception import AwsException
 from comtest.maxmin.utils import TestUtils
 

@@ -4,12 +4,12 @@ Created on Mar 20, 2023
 @author: vagrant
 """
 
-from com.maxmin.aws.client import Ec2
+from com.maxmin.aws.client import Ec2Dao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
 
-class RouteTable(Ec2):
+class RouteTableDao(Ec2Dao):
     """
     Class that represents an AWS route table.
     """

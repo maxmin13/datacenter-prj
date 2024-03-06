@@ -31,7 +31,6 @@ class HostedZoneConfig(object):
             raise AwsException("Invalid JSON file!")
 
         self.description = self._hosted_zone.get("Description")
-        # fully qualified domain name, must have a trailing dot.
         self.registered_domain = self._hosted_zone.get("RegisteredDomain")
 
 
@@ -111,8 +110,8 @@ class DatacenterConfig(object):
                 group_config.rules.append(rule_config)
 
         for instance in self._datacenter.get("Instances"):
-            self.instances.append(
-                InstanceConfig(
+            
+            instance_config = InstanceConfig(
                     instance.get("UserName"),
                     instance.get("UserPassword"),
                     instance.get("PrivateIp"),
@@ -120,10 +119,16 @@ class DatacenterConfig(object):
                     instance.get("Subnet"),
                     instance.get("ParentImage"),
                     instance.get("TargetImage"),
-                    instance.get("Tags"),
                     instance.get("DnsDomain"),
                     instance.get("HostName"),
                 )
+            
+            for tag in instance.get("Tags"):
+                tag_config = TagConfig(tag.get("Key"), tag.get("Value"))
+                instance_config.tags.append(tag_config)
+            
+            self.instances.append(
+                instance_config
             )
 
 
@@ -198,7 +203,6 @@ class InstanceConfig(object):
         subnet,
         parent_img,
         target_img,
-        tags,
         dns_domain,
         host_name,
     ):
@@ -209,6 +213,22 @@ class InstanceConfig(object):
         self.subnet = subnet
         self.parent_img = parent_img
         self.target_img = target_img
-        self.tags = tags
+        self.tags = []
         self.dns_domain = dns_domain
         self.host_name = host_name
+
+class TagConfig(object):
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        
+    def to_dictionary(self)->str:
+        
+        dictionary = self.__dict__
+        new_dict = dict()
+        
+        for key, value in dictionary.items():
+            new_dict[str.capitalize(key)] = value 
+
+        return new_dict
+    

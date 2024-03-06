@@ -9,11 +9,11 @@ import crypt
 import jinja2
 
 from com.maxmin.aws.constants import ProjectFiles
-from com.maxmin.aws.ec2.dao.image import Image
-from com.maxmin.aws.ec2.dao.instance import Instance
-from com.maxmin.aws.ec2.dao.security_group import SecurityGroup
-from com.maxmin.aws.ec2.dao.ssh import Keypair
-from com.maxmin.aws.ec2.dao.subnet import Subnet
+from com.maxmin.aws.ec2.dao.image_dao import ImageDao
+from com.maxmin.aws.ec2.dao.instance_dao import InstanceDao
+from com.maxmin.aws.ec2.dao.security_group_dao import SecurityGroupDao
+from com.maxmin.aws.ec2.dao.ssh_dao import KeypairDao
+from com.maxmin.aws.ec2.dao.subnet_dao import SubnetDao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
@@ -21,10 +21,11 @@ from com.maxmin.aws.logs import Logger
 class InstanceService(object):
     def create_instance(
         self,
+        instance_nm: str,
         parent_image_nm: str,
         security_group_nm: str,
         subnet_nm: str,
-        keypair: Keypair,
+        keypair: KeypairDao,
         private_ip: str,
         user_nm: str,
         user_pwd: str,
@@ -57,24 +58,24 @@ class InstanceService(object):
                 bytes(str(cloudinit_config), "utf-8")
             )
 
-            parent_image = Image(parent_image_nm)
+            parent_image_dao = ImageDao(parent_image_nm)
 
-            if parent_image.load() is False:
+            if parent_image_dao.load() is False:
                 raise AwsException("Error loading image!")
 
-            security_group = SecurityGroup(security_group_nm)
-            security_group.load()
-            subnet = Subnet(subnet_nm)
-            subnet.load()
+            security_group_dao = SecurityGroupDao(security_group_nm)
+            security_group_dao.load()
+            subnet_dao = SubnetDao(subnet_nm)
+            subnet_dao.load()
 
-            instance = Instance(tags)
-            if instance.load() is False:
+            instance_dao = InstanceDao(instance_nm)
+            if instance_dao.load() is False:
                 Logger.info("Creating instance ...")
 
-                instance.create(
-                    parent_image.id,
-                    security_group.id,
-                    subnet.id,
+                instance_dao.create(
+                    parent_image_dao.id,
+                    security_group_dao.id,
+                    subnet_dao.id,
                     private_ip,
                     cloudinit_config_b64,
                     tags,

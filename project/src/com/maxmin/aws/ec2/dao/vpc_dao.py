@@ -4,12 +4,12 @@ Created on Mar 20, 2023
 @author: vagrant
 """
 
-from com.maxmin.aws.client import Ec2
+from com.maxmin.aws.client import Ec2Dao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
 
-class Vpc(Ec2):
+class VpcDao(Ec2Dao):
     """
     Class that represents an AWS vpc.
     """
@@ -39,8 +39,8 @@ class Vpc(Ec2):
         ).get("Vpcs")
 
         if len(response) > 1:
-            # do not allow more vpc with the same name.
-            raise AwsException("Found more than 1 vpc!")
+            # do not allow more VPC with the same name.
+            raise AwsException("Found more than 1 VPC!")
 
         if len(response) == 0:
             return False
@@ -57,8 +57,8 @@ class Vpc(Ec2):
         """
 
         if self.load() is True:
-            # do not allow more vpc with the same name.
-            raise AwsException("Vpc already created!")
+            # do not allow more VPC with the same name.
+            raise AwsException("VPC already created!")
 
         try:
             self.id = (
@@ -78,7 +78,7 @@ class Vpc(Ec2):
             )
         except Exception as e:
             Logger.error(str(e))
-            raise AwsException("Error creating the vpc!")
+            raise AwsException("Error creating the VPC!")
 
         waiter = self.ec2.get_waiter("vpc_available")
         waiter.wait(VpcIds=[self.id])
@@ -91,4 +91,4 @@ class Vpc(Ec2):
             self.ec2.delete_vpc(VpcId=self.id)
         except Exception as e:
             Logger.error(str(e))
-            raise AwsException("Error deleting the vpc!")
+            raise AwsException("Error deleting the VPC!")

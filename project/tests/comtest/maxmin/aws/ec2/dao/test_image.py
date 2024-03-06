@@ -8,7 +8,7 @@ from moto import mock_ec2
 from pytest import fail
 import pytest
 
-from com.maxmin.aws.ec2.dao.image import Image
+from com.maxmin.aws.ec2.dao.image_dao import Image
 from com.maxmin.aws.exception import AwsException
 from comtest.maxmin.aws.constants import AMI_ID
 from comtest.maxmin.utils import TestUtils

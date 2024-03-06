@@ -1,7 +1,7 @@
 from moto.route53 import mock_route53
 import pytest
 
-from com.maxmin.aws.route53.dao.record import Record
+from com.maxmin.aws.route53.dao.record_dao import Record
 from comtest.maxmin.utils import TestUtils
 
 

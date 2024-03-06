@@ -10,8 +10,8 @@ from pytest import fail
 import pytest
 
 from com.maxmin.aws.constants import ProjectDirectories
-from com.maxmin.aws.ec2.dao.instance import Instance
-from com.maxmin.aws.ec2.dao.ssh import Keypair
+from com.maxmin.aws.ec2.dao.instance_dao import Instance
+from com.maxmin.aws.ec2.dao.ssh_dao import Keypair
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 from comtest.maxmin.aws.constants import AMI_ID

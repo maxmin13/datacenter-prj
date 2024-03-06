@@ -5,12 +5,12 @@ Created on Apr 9, 2023
 """
 import re
 
-from com.maxmin.aws.client import Route53
+from com.maxmin.aws.client import Route53Dao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
 
-class Record(Route53):
+class RecordDao(Route53Dao):
     """
     classdocs
     """

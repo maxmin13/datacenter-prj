@@ -5,24 +5,20 @@ from com.maxmin.aws.configuration import (
     CidrRuleConfig,
     HostedZoneConfig,
 )
-from com.maxmin.aws.ec2.dao import internet_gateway, instance
-from com.maxmin.aws.ec2.dao.instance import Instance
-from com.maxmin.aws.ec2.dao.internet_gateway import InternetGateway
-from com.maxmin.aws.ec2.dao.route_table import RouteTable
-from com.maxmin.aws.ec2.dao.security_group import (
-    SecurityGroup,
-    CidrRule,
-    SgpRule,
-)
-from com.maxmin.aws.ec2.dao.ssh import Keypair
-from com.maxmin.aws.ec2.dao.subnet import Subnet
-from com.maxmin.aws.ec2.dao.vpc import Vpc
-from com.maxmin.aws.ec2.service.instance import InstanceService
+
+from com.maxmin.aws.ec2.dao.instance_dao import InstanceDao
+from com.maxmin.aws.ec2.dao.internet_gateway_dao import InternetGatewayDao
+from com.maxmin.aws.ec2.dao.route_table_dao import RouteTableDao
+from com.maxmin.aws.ec2.dao.ssh_dao import KeypairDao
+from com.maxmin.aws.ec2.dao.subnet_dao import SubnetDao
+from com.maxmin.aws.ec2.dao.vpc_dao import VpcDao
+from com.maxmin.aws.ec2.service.instance_service import InstanceService
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 from com.maxmin.aws.constants import ProjectDirectories
-from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
-from com.maxmin.aws.route53.dao.record import Record
+from com.maxmin.aws.route53.dao.hosted_zone_dao import HostedZoneDao
+from com.maxmin.aws.route53.dao.record_dao import RecordDao
+from com.maxmin.aws.ec2.dao.security_group_dao import SecurityGroupDao, CidrRuleDao, SgpRuleDao
 
 if __name__ == "__main__":
     # datacenter.json
@@ -37,34 +33,30 @@ if __name__ == "__main__":
     # Create the vpc
     #
 
-    vpc = Vpc(datacenter_config.vpc.name)
+    vpc_dao = VpcDao(datacenter_config.vpc.name)
 
-    if vpc.load() is False:
-        vpc.create(datacenter_config.vpc.cidr)
+    if vpc_dao.load() is False:
+        vpc_dao.create(datacenter_config.vpc.cidr)
 
         Logger.info("VPC created!")
     else:
         Logger.warn("VPC already created!")
 
-    vpc.load()
-
     #
     # Create the Internet gateway
     #
 
-    internet_gateway = InternetGateway(datacenter_config.internet_gateway)
+    internet_gateway_dao = InternetGatewayDao(datacenter_config.internet_gateway)
 
-    if internet_gateway.load() is False:
-        internet_gateway.create()
+    if internet_gateway_dao.load() is False:
+        internet_gateway_dao.create()
 
         Logger.info("Internet gateway created!")
     else:
         Logger.warn("Internet gateway already created!")
 
-    internet_gateway.load()
-
-    if internet_gateway.is_attached_to(vpc.id) is False:
-        internet_gateway.attach_to(vpc.id)
+    if internet_gateway_dao.is_attached_to(vpc_dao.id) is False:
+        internet_gateway_dao.attach_to(vpc_dao.id)
 
         Logger.info("Internet gateway attached to the vpc!")
     else:
@@ -74,19 +66,17 @@ if __name__ == "__main__":
     # Create the route table
     #
 
-    route_table = RouteTable(datacenter_config.route_table)
+    route_table_dao = RouteTableDao(datacenter_config.route_table)
 
-    if route_table.load() is False:
-        route_table.create(vpc.id)
+    if route_table_dao.load() is False:
+        route_table_dao.create(vpc_dao.id)
 
         Logger.info("Route table created!")
     else:
         Logger.warn("Route table already created!")
 
-    route_table.load()
-
-    if route_table.has_route(internet_gateway.id, "0.0.0.0/0") is False:
-        route_table.create_route(internet_gateway.id, "0.0.0.0/0")
+    if route_table_dao.has_route(internet_gateway_dao.id, "0.0.0.0/0") is False:
+        route_table_dao.create_route(internet_gateway_dao.id, "0.0.0.0/0")
 
         Logger.info("Route to the Internet gateway created!")
     else:
@@ -97,27 +87,27 @@ if __name__ == "__main__":
     #
 
     for subnet_config in datacenter_config.subnets:
-        subnet = Subnet(subnet_config.name)
+        subnet_dao = SubnetDao(subnet_config.name)
 
-        if subnet.load() is False:
-            subnet.create(subnet_config.az, subnet_config.cidr, vpc.id)
+        if subnet_dao.load() is False:
+            subnet_dao.create(subnet_config.az, subnet_config.cidr, vpc_dao.id)
 
             Logger.info("Subnet created!")
         else:
             Logger.warn("Subnet already created!")
 
-        route_table.associate_subnet(subnet.id)
+        route_table_dao.associate_subnet(subnet_dao.id)
 
     #
     # Create the security group
     #
 
     for security_group_config in datacenter_config.security_groups:
-        security_group = SecurityGroup(security_group_config.name)
+        security_group_dao = SecurityGroupDao(security_group_config.name)
 
-        if security_group.load() is False:
-            security_group.create(security_group_config.description, vpc.id)
-            security_group.load()
+        if security_group_dao.load() is False:
+            security_group_dao.create(security_group_config.description, vpc_dao.id)
+            security_group_dao.load()
 
             Logger.info("Security group created!")
 
@@ -125,10 +115,10 @@ if __name__ == "__main__":
 
             for rule_config in rules_config:
                 if isinstance(rule_config, CidrRuleConfig):
-                    cidr_rule = CidrRule(security_group.id)
+                    cidr_rule_dao = CidrRuleDao(security_group_dao.id)
 
                     if (
-                        cidr_rule.load(
+                        cidr_rule_dao.load(
                             rule_config.from_port,
                             rule_config.to_port,
                             rule_config.protocol,
@@ -137,7 +127,7 @@ if __name__ == "__main__":
                         )
                         is False
                     ):
-                        cidr_rule.create(
+                        cidr_rule_dao.create(
                             rule_config.from_port,
                             rule_config.to_port,
                             rule_config.protocol,
@@ -149,10 +139,10 @@ if __name__ == "__main__":
                     else:
                         Logger.warn("Cidr rule already created!")
                 else:
-                    sgp_rule = SgpRule(security_group.id)
+                    sgp_rule_dao = SgpRuleDao(security_group_dao.id)
 
                     if (
-                        sgp_rule.load(
+                        sgp_rule_dao.load(
                             rule_config.from_port,
                             rule_config.to_port,
                             rule_config.protocol,
@@ -161,7 +151,7 @@ if __name__ == "__main__":
                         )
                         is False
                     ):
-                        sgp_rule.create(
+                        sgp_rule_dao.create(
                             rule_config.from_port,
                             rule_config.to_port,
                             rule_config.protocol,
@@ -180,44 +170,48 @@ if __name__ == "__main__":
     #
 
     for instance_config in datacenter_config.instances:
-        for tag in instance_config.tags:
-            if tag.get("Key") == "Name":
-                key_name = tag.get("Value")
-                keypair = Keypair(key_name, ProjectDirectories.ACCESS_DIR)
+        for tag_config in instance_config.tags:
+            if tag_config.key == "Name":
+                instance_nm = tag_config.value
                 break
 
-        if not key_name:
-            raise AwsException("SSH key name not found in configuration.")
+        if not instance_nm:
+            raise AwsException("Instance name not found in configuration.")
+        
+        keypair_dao = KeypairDao(instance_nm, ProjectDirectories.ACCESS_DIR)
 
-        if keypair.load() is False:
-            keypair.create()
+        if keypair_dao.load() is False:
+            keypair_dao.create()
 
             Logger.info("Key pair created!")
 
-            keypair.load()
+            keypair_dao.load()
         else:
             Logger.warn("Key pair already created!")
 
-        instance = Instance(instance_config.tags)
-        instance.load()
+        instance_dao = InstanceDao(instance_nm)
+        instance_dao.load()
 
-        if instance.state == "terminated":
+        if instance_dao.state == "terminated":
             raise AwsException(
-                "The instance is terminated, you may need to wait a while, or change the instance name in datacenter.json file."
+                "The instance_dao is terminated, you may need to wait a while, or change the instance_dao name in datacenter.json file."
             )
 
         instance_service = InstanceService()
         instance_service.create_instance(
+            instance_nm,
             instance_config.parent_img,
             instance_config.security_group,
             instance_config.subnet,
-            keypair,
+            keypair_dao,
             instance_config.private_ip,
             instance_config.username,
             instance_config.password,
             instance_config.tags,
             instance_config.host_name,
         )
+        
+        instance_dao.load() 
 
         if (
             not hostedzone_config.registered_domain
@@ -226,18 +220,15 @@ if __name__ == "__main__":
             Logger.warn("Incomplete DNS data configuration!")
         else:
             try:
-                hosted_zone = HostedZone(hostedzone_config.registered_domain)
-                if hosted_zone.load() is False:
+                hosted_zone_dao = HostedZoneDao(hostedzone_config.registered_domain)
+                if hosted_zone_dao.load() is False:
                     Logger.warn("DNS Hosted zone doesn't exist!")
                 else:
-                    record = Record(instance_config.dns_domain, hosted_zone.id)
-                    if record.load() is False:
+                    record_dao = RecordDao(instance_config.dns_domain, hosted_zone_dao.id)
+                    if record_dao.load() is False:
                         Logger.info("DNS record doesn't exists, creating ...")
 
-                        record = Record(
-                            instance_config.dns_domain, hosted_zone.id
-                        )
-                        record.create(instance.public_ip)
+                        record_dao.create(instance_dao.public_ip)
 
                         Logger.info("DNS record created!")
                     else:
@@ -245,10 +236,10 @@ if __name__ == "__main__":
 
             except Exception as e:
                 Logger.warn(str(e))
-
+                
     Logger.info("Data center created!")
 
     if instance_config.dns_domain:
         Logger.info("Instance DNS name: " + instance_config.dns_domain)
 
-    Logger.info("Instance IP address: " + instance.public_ip)
+    Logger.info("Instance IP address: " + instance_dao.public_ip)

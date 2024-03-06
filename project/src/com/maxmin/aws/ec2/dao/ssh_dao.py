@@ -8,12 +8,12 @@ import stat
 
 from botocore.exceptions import ClientError
 
-from com.maxmin.aws.client import Ec2
+from com.maxmin.aws.client import Ec2Dao
 from com.maxmin.aws.exception import AwsException
 from com.maxmin.aws.logs import Logger
 
 
-class Keypair(Ec2):
+class KeypairDao(Ec2Dao):
     """
     classdocs
     """

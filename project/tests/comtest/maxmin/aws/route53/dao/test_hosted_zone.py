@@ -1,7 +1,7 @@
 from moto.route53 import mock_route53
 import pytest
 
-from com.maxmin.aws.route53.dao.hosted_zone import HostedZone
+from com.maxmin.aws.route53.dao.hosted_zone_dao import HostedZone
 from comtest.maxmin.utils import TestUtils
 
 
