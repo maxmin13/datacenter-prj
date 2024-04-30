@@ -186,6 +186,8 @@ export AWS_DEFAULT_REGION=zzzzzz
 export DATACENTER_DIR=/home/vagrant/Downloads/datacenter-prj
 export BACKOFFICE_DIR=/home/vagrant/Downloads/backoffice-prj
 
+source .venv/bin/activate
+
 cd datacenter-prj/provision
 
 ansible-playbook playbooks/mariadb.yml
