@@ -9,8 +9,8 @@
     - variables/provision.yml
     - variables/secrets.yml
 
-#  vars:
-#     JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
+  vars:
+     MARIADB_VERSION: "{{ aws.instance.mariadb.version }}"  
 #     CATALINA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.tomcat.root.dir.name }}"
 #     HTTPS_PORT: "{{ aws.instance.tomcat.https.port }}"
     
@@ -22,7 +22,7 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'MariaDB version: {{ aws.instance.mariadb.version }}'
+          - 'MariaDB version: {{ MARIADB_VERSION }}'
 
     - name: Fetch MariaDB	 version
       shell: mariadb --version 2>&1 | awk '{print $3}' | sed 's/"//g'
@@ -36,14 +36,14 @@
     - name: End the play if MariaDB is installed
       ansible.builtin.meta: end_play
       when:
-        - mariadb_version.stdout | length > 0 and mariadb_version.stdout is version_compare(aws.instance.mariadb.version, '>=')     
+        - mariadb_version.stdout | length > 0 and mariadb_version.stdout is version_compare(MARIADB_VERSION, '>=')     
       ignore_errors: true
                                                 
   tasks:
       
     - name: Add Amazon linux extras MariaDB repository
       become: true
-      ansible.builtin.command: 'amazon-linux-extras enable mariadb{{ aws.instance.mariadb.version }}'
+      ansible.builtin.command: 'amazon-linux-extras enable mariadb{{ MARIADB_VERSION }}'
 
     - name: Clean yum metadata
       become: true

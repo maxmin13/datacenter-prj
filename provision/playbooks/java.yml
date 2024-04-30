@@ -10,6 +10,7 @@
     - variables/secrets.yml
         
   vars:
+    JAVA_VERSION: "{{ aws.instance.java.version }}"
     JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
     
   pre_tasks:
@@ -20,7 +21,7 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'Java version used in the host: {{ aws.instance.java.version }}' 
+          - 'Java version used in the host: {{ JAVA_VERSION }}' 
           - 'Java home: {{ JAVA_HOME }}'  
           
     - name: Fetch Java version
@@ -36,7 +37,7 @@
     - name: End the play if Java is installed
       ansible.builtin.meta: end_play
       when:
-        - java_version.stdout | length > 0 and java_version.stdout is version_compare('18', '>=') and java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME     
+        - java_version.stdout | length > 0 and java_version.stdout is version_compare(JAVA_VERSION, '>=') and java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME     
       ignore_errors: true
  
     - name: Create download directory
