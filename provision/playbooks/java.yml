@@ -15,7 +15,7 @@
     
   pre_tasks:
   
-    - name: Controller host configuration
+    - name: Configuration variables
       ansible.builtin.debug:
         msg:
           - 'SSH instance port: {{ ansible_port }}'
@@ -36,8 +36,8 @@
                     
     - name: End the play if Java is installed
       ansible.builtin.meta: end_play
-      when:
-        - java_version.stdout | length > 0 and (java_version.stdout | type_debug == "int") and (java_version.stdout | int) is version_compare(MARIADB_VERSION, '>=')     
+      when: 
+        - (java_version.stdout | int > 0) and (java_version.stdout is version_compare(JAVA_VERSION, '>='))   
       ignore_errors: true
  
     - name: Create download directory

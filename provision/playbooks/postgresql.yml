@@ -13,7 +13,7 @@
     ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"    
     
   pre_tasks:
-    - name: Controller host configuration
+    - name: Configuration variables
       ansible.builtin.debug:
         msg:
           - 'SSH instance port: {{ ansible_port }}'

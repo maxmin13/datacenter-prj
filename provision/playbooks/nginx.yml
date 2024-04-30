@@ -40,7 +40,7 @@
       when:
         - '''Running on '' in result.content'
         
-    - name: Controller host configuration
+    - name: Configuration variables
       ansible.builtin.debug:
         msg:
           - 'SSH instance port: {{ ansible_port }}'

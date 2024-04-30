@@ -26,7 +26,7 @@
       vars:
         jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'  
      
-    - name: Controller host configuration
+    - name: Configuration variables
       ansible.builtin.debug:
         msg:
           - 'SSH instance port: {{ ansible_port }}'
