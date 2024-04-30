@@ -12,6 +12,7 @@
   vars:
      JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
      CATALINA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.tomcat.root.dir.name }}"
+     HTTPS_PORT: "{{ aws.instance.tomcat.https.port }}"
     
   pre_tasks:
   
@@ -33,7 +34,8 @@
           - 'SSH instance key: {{ ansible_private_key_file }}'
           - 'Java version: {{ aws.instance.java.version }}'
           - 'Java home: {{ JAVA_HOME }}' 
-          - 'Tomcat version: {{ aws.instance.tomcat.version }}'   
+          - 'Tomcat version: {{ aws.instance.tomcat.version }}'  
+          - 'Tomcat HTTPS port: {{ HTTPS_PORT }}' 
 
     - name: Fetch Java version
       shell: source /etc/profile; java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
@@ -162,7 +164,7 @@
       ansible.builtin.systemd_service:
         daemon_reload: true           
     
-    - name: Make sure a service unit is running
+    - name: Start Tomcat
       become: true
       become_method: sudo     
       ansible.builtin.systemd_service:
@@ -170,10 +172,10 @@
         enabled: true
         name: tomcat    
         
-    - name: 'Test it! https://{{ instance_dns_domain }}:8444/'
+    - name: 'Test it! https://{{ instance_dns_domain }}:{{ HTTPS_PORT }}/'
       become: false
       ansible.builtin.uri:
-        url: 'https://{{ instance_dns_domain }}:8444/'
+        url: 'https://{{ instance_dns_domain }}:{{ HTTPS_PORT }}/'
         method: GET
         status_code: 200
         validate_certs: false

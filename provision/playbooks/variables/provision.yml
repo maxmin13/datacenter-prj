@@ -26,8 +26,6 @@ aws:
       tls:
         keystore:
           file: "tomcat.jks"          
-      http:
-        port: "8090"
       https:
         port: "8444"              
     python:
