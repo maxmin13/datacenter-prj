@@ -10,7 +10,6 @@
     - variables/secrets.yml
 
   vars:
-     ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
      JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
      CATALINA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.tomcat.root.dir.name }}"
     
@@ -35,8 +34,6 @@
           - 'Java version: {{ aws.instance.java.version }}'
           - 'Java home: {{ JAVA_HOME }}' 
           - 'Tomcat version: {{ aws.instance.tomcat.version }}'   
-          - 'AWS instance domain: {{ instance_dns_domain }}'
-          - 'Python version used in the host: {{ aws.instance.python.version }}' 
 
     - name: Fetch Java version
       shell: source /etc/profile; java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
