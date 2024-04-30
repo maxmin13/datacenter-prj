@@ -13,5 +13,5 @@ Upload the project:
 	git add . && git commit -m "Initial commit"
 	git remote add origin git@github.com:maxmin13/datacenter-prj.git
 	eval `ssh-agent -s`
-        ssh-add /home/vagrant/.ssh/id_ansible_prj
+        ssh-add /home/vagrant/.ssh/id_github
         git push origin master

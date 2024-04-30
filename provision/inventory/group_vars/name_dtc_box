@@ -3,7 +3,7 @@
 # DATACENTER_DIR
 
 # tag name of the datacenter AWS instance 
-instance_name: "admin-box"
+instance_name: "dtc-box"
 
 # directory where the datacenter project is downloaded from github, used in the playbooks
 datacenter_dir: "{{ lookup('env','DATACENTER_DIR') }}"
