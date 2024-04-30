@@ -63,6 +63,15 @@ ANSIBLE_PLAYBOOK_CMD="${DATACENTER_DIR}"/.venv/bin/ansible-playbook
 
 cd "${DATACENTER_DIR}"/provision || exit
 
+
+
+
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/mariadb.yml 
+exit
+exit
+exit
+exit
+
 ########################
 ##### UPDATE SYSTEM ####
 ########################
@@ -104,15 +113,27 @@ echo "Nginx ..."
 "${ANSIBLE_PLAYBOOK_CMD}" playbooks/nginx.yml 
 
 #################
-##### JAVA ####
+##### JAVA ######
 #################
 
 echo "Java ..."
 
 "${ANSIBLE_PLAYBOOK_CMD}" playbooks/java.yml 
 
+###################
+##### TOMCAT ######
+###################
+
 echo "Tomcat ..."
 
 "${ANSIBLE_PLAYBOOK_CMD}" playbooks/tomcat.yml 
+
+###################
+##### MARIADB ######
+###################
+
+echo "MariaDB ..."
+
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/mariadb.yml 
 
 echo "Datacenter provisioned."
