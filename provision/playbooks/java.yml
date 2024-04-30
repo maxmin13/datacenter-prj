@@ -37,7 +37,7 @@
     - name: End the play if Java is installed
       ansible.builtin.meta: end_play
       when:
-        - java_version.stdout | length > 0 and java_version.stdout is version_compare(JAVA_VERSION | int, '>=') and java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME     
+        - java_version.stdout | length > 0 and java_version.stdout | int is version_compare(JAVA_VERSION, '>=') and java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME     
       ignore_errors: true
  
     - name: Create download directory
