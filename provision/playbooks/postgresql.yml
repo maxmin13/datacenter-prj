@@ -1,0 +1,121 @@
+- name: Install Postgresql server
+
+  hosts:
+    - database_postgresql
+    
+  gather_facts: false
+  
+  vars_files:
+    - variables/secrets.yml
+    - variables/provision.yml
+    
+  vars:
+    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"    
+    
+  pre_tasks:
+    - name: Controller host configuration
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'PostgreSql super user: {{ postgresql_superuser }}'
+          - 'PostgreSql version: {{ aws.instance.postgresql.version }}'
+          - 'Python version used in the host: {{ aws.instance.python.version }}'
+          
+    - name: PostgreSQL version
+      ansible.builtin.shell: 'psql --version'
+      register: psql_ver
+      ignore_errors: true
+
+    - name: End the play if PostgreSQL is already installed
+      ansible.builtin.meta: end_play
+      when: aws.instance.postgresql.version in psql_ver.stdout
+              
+  tasks:
+    - name: Remove Postgresql
+      become: true
+      yum:
+        name: postgresql
+        state: absent
+        
+    - name: Delete Postgresql data directory
+      become: true
+      ansible.builtin.file:
+        path: /var/lib/pgsql
+        state: absent
+        
+    - name: Add Postgresql repository
+      become: true
+      ansible.builtin.yum_repository:
+        name: postgresql
+        description: 'postgresql {{ aws.instance.postgresql.version }}'
+        baseurl: '{{ aws.instance.postgresql.download.url }}'
+        
+    - name: Install Postgresql packages
+      become: true
+      ansible.builtin.yum:
+        update_cache: true
+        disable_gpg_check: true
+        state: present
+        name:
+          - 'postgresql{{ aws.instance.postgresql.version }}'
+          - 'postgresql{{ aws.instance.postgresql.version }}-server'
+          
+    - name: Find out if Postgresql is initialized
+      become: true
+      ansible.builtin.stat:
+        path: '/var/lib/pgsql/14/data/pg_hba.conf'
+      register: postgres_data
+      
+    - name: Initialize Postgresql
+      become: true
+      ansible.builtin.shell: '/usr/pgsql-{{ aws.instance.postgresql.version }}/bin/postgresql-{{ aws.instance.postgresql.version }}-setup initdb'
+      when: not postgres_data.stat.exists
+      
+    - name: Starting Postgresql services
+      become: true
+      ansible.builtin.service:
+        name: 'postgresql-14'
+        state: started
+        enabled: true
+        
+    - name: Allow remote connection
+      become: true
+      ansible.builtin.lineinfile:
+        path: '/var/lib/pgsql/14/data/postgresql.conf'
+        regexp: '#listen_addresses = ''localhost''*'
+        line: listen_addresses = '*'
+        owner: '{{ postgresql_superuser }}'
+        group: '{{ postgresql_superuser }}'
+        mode: '0644'
+        
+    - name: Allow md5 connection
+      become: true
+      become_user: "{{ postgresql_superuser }}"
+      community.general.postgresql_pg_hba:
+        dest: '/var/lib/pgsql/14/data/pg_hba.conf'
+        contype: host
+        databases: all
+        source: 0.0.0.0/0
+        method: md5
+        users: all
+        create: true
+        
+    - name: Restart Postgresql services
+      become: true
+      ansible.builtin.service:
+        name: 'postgresql-14'
+        state: restarted
+        enabled: true
+        
+    - name: PostgreSQL version
+      ansible.builtin.command: 'psql --version'
+      register: psql_ver
+
+    - name: PostgreSQL version
+      debug: 'msg="{{ psql_ver.stdout }}"'
+
+    - ansible.builtin.assert:
+        that:
+          - aws.instance.postgresql.version in psql_ver.stdout      

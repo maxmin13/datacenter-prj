@@ -1,0 +1,108 @@
+- name: Install Java 18
+
+  hosts:
+    - program_java
+    
+  gather_facts: false
+  
+  vars_files:
+    - variables/provision.yml
+    - variables/secrets.yml
+        
+  vars:
+    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
+    JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
+    
+  pre_tasks:
+  
+    - name: Controller host configuration
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Java version used in the host: {{ aws.instance.java.version }}' 
+          - 'Java home: {{ JAVA_HOME }}'  
+          - 'Python version used in the host: {{ aws.instance.python.version }}'
+          
+    - name: Fetch Java version
+      shell: source /etc/profile; java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+      register: java_version
+      ignore_errors: true
+      
+    - name: "Fetch JAVA_HOME"
+      shell: source /etc/profile; dirname $(dirname $(readlink -f $(which javac)))	
+      register: java_home
+      ignore_errors: true       
+                    
+    - name: End the play if Java is installed
+      ansible.builtin.meta: end_play
+      when:
+        - java_version.stdout | length > 0 and java_version.stdout is version_compare('18', '>=') and java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME     
+      ignore_errors: true
+ 
+    - name: Create download directory
+      become: true
+      ansible.builtin.file:
+        path: '{{ aws.instance.download.dir.path }}'
+        state: directory
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        mode: 488       
+     
+  tasks:
+
+    - name: Download the JDK binaries
+      get_url:
+        url: "{{ aws.instance.java.download.url }}"
+        dest: "{{ aws.instance.download.dir.path }}/openjdk.tar.gz"
+        
+    - name: Unzip the downloaded file
+      become: true
+      unarchive:
+        src: "{{ aws.instance.download.dir.path }}/openjdk.tar.gz"
+        dest: "{{ aws.instance.programs.install.dir.path }}"
+        remote_src: true               
+       
+    - name: Set the JAVA_HOME in /etc/profile file
+      become: true
+      lineinfile:
+        path: /etc/profile
+        state: present
+        line: "{{ item }}"
+      with_items:
+        - 'export JAVA_HOME="{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"'
+        - 'export PATH=$PATH:$JAVA_HOME/bin'   
+
+    - name: Fetch Java version
+      shell: source /etc/profile; java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+      register: java_version
+          
+    - name: "Fetch JAVA_HOME"
+      shell: source /etc/profile; dirname $(dirname $(readlink -f $(which javac)))
+      register: java_home
+        
+    - assert:
+        that:
+          - java_version.stdout | length > 0 and java_version.stdout is version_compare('18', '>=') 
+          - java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME  
+          
+    - name: Print Java version
+      ansible.builtin.debug:
+        msg:
+          - 'java_version: {{ java_version.stdout }}'                           
+
+    - name: Print Java home
+      ansible.builtin.debug:
+        msg:
+          - 'java_home: {{ java_home.stdout }}'     
+          
+  post_tasks:
+  
+    - name: Delete download directory
+      become: true
+      ansible.builtin.file:
+        path: '{{ aws.instance.download.dir.path }}'
+        state: absent   
+          
+                         

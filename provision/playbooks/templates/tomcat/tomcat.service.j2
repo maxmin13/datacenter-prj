@@ -1,0 +1,17 @@
+[Unit]
+Description=Tomcat
+After=network.target
+
+[Service]
+User=tomcat
+WorkingDirectory={{ CATALINA_HOME }}
+Environment=JRE_HOME={{ JAVA_HOME }}
+Environment=JAVA_HOME={{ JAVA_HOME }}
+Environment=CATALINA_HOME={{ CATALINA_HOME }}
+Environment=CATALINE_BASE={{ CATALINA_HOME }}
+ExecStart={{ CATALINA_HOME }}/bin/catalina.sh run
+ExecStop={{ CATALINA_HOME }}/bin/shutdown.sh
+SyslogIdentifier=tomcat-%i
+
+[Install]
+WantedBy=multi-user.target 

@@ -1,0 +1,111 @@
+- name: Install python 3.11.4
+
+  hosts:
+    - program_python
+    
+  gather_facts: false
+  
+  vars_files:
+    - variables/vars.yml
+    - variables/provision.yml
+    
+  pre_tasks:
+  
+    - name: Controller host configuration
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Phython version: {{ aws.instance.python.version }}'
+          
+    - name: Openssl version
+      ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
+      register: openssl_ver
+      
+    - assert:
+        that:
+          - aws.instance.openssl.version in openssl_ver.stdout     
+          
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+      
+    - name: End the play if Python is already upgraded
+      ansible.builtin.meta: end_play
+      when: aws.instance.python.version in python_ver.stdout
+      
+    - name: Installs a list of packages
+      become: true
+      ansible.builtin.yum:
+        name:
+          - gcc
+          - perl-core
+          - pcre-devel
+          - bzip2-devel
+          - libffi-devel
+          - zlib-devel
+          - sqlite-devel
+          - readline-devel
+          - gdbm-devel
+          - uuid-devel
+          - xz-devel
+          - ncurses-devel
+          - tk-devel
+          - db4-devel
+          - libpcap-devel
+          - expat-devel
+          - tkinter
+          - lzma
+          
+    - name: Create download directory
+      become: true
+      ansible.builtin.file:
+        path: '{{ aws.instance.download.dir.path }}'
+        state: directory
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        mode: 488
+        
+  tasks:
+    - name: Download Python archive
+      ansible.builtin.get_url:
+        url: '{{ aws.instance.python.download.url }}'
+        dest: '{{ aws.instance.download.dir.path }}'
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        
+    - name: Unarchive Python
+      ansible.builtin.unarchive:
+        src: '{{ aws.instance.download.dir.path }}/Python-3.11.4.tar.xz'
+        dest: '{{ aws.instance.download.dir.path }}'
+        remote_src: true
+    
+    - name: Initialize Python
+      ansible.builtin.shell: 'export LD_RUN_PATH={{ aws.instance.programs.install.dir.path }}/openssl/lib && cd {{ aws.instance.download.dir.path }}/Python-3.11.4 && ./configure --enable-optimizations --with-openssl={{ aws.instance.programs.install.dir.path }}/openssl -C'
+    
+    - name: Make Python
+      ansible.builtin.shell: 'cd {{ aws.instance.download.dir.path }}/Python-3.11.4 && make clean && make'
+        
+    - name: Build Python
+      become: true
+      ansible.builtin.shell: 'cd {{ aws.instance.download.dir.path }}/Python-3.11.4 && make altinstall'
+        
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      
+    - name: Python version
+      debug: 'msg="{{ python_ver }}"'
+    - ansible.builtin.assert:
+        that:
+          - aws.instance.python.version in python_ver.stdout
+          
+  post_tasks:
+  
+    - name: Delete download directory
+      become: true
+      ansible.builtin.file:
+        path: '{{ aws.instance.download.dir.path }}'
+        state: absent

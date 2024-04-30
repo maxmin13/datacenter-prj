@@ -1,0 +1,18 @@
+plugin: aws_ec2
+keyed_groups:
+  - key: tags.name
+    prefix: name
+  - key: tags.class
+    prefix: class
+  - key: tags.database
+    prefix: database 
+  - key: tags.security
+    prefix: security
+  - key: tags.program
+    prefix: program 
+  - key: tags.webserver
+    prefix: webserver            
+filters:
+  instance-state-name: running
+compose:
+  ansible_host: public_ip_address

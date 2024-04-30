@@ -1,0 +1,4 @@
+# variables in this file will be pulled for every execution
+
+ansible_connection: ssh
+ansible_port: 22

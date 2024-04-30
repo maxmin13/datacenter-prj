@@ -1,0 +1,15 @@
+# expected environment variables:
+#
+# DATACENTER_DIR
+
+# tag name of the datacenter AWS instance 
+instance_name: "admin-box"
+
+# directory where the datacenter project is downloaded from github, used in the playbooks
+datacenter_dir: "{{ lookup('env','DATACENTER_DIR') }}"
+
+# user credentials associated with the instance private key:
+ansible_ssh_private_key_file: "{{ datacenter_dir }}/access/{{ instance_name }}"
+ansible_user: "dtcadmin" 
+ansible_password: "dtcadmin"
+ansible_sudo_pass: "dtcadmin"

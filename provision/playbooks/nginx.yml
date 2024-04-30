@@ -1,0 +1,122 @@
+- name: Configure a webserver with Nginx
+
+  hosts:
+    - webserver_nginx
+    
+  gather_facts: false
+  
+  vars_files:
+    - variables/vars.yml
+    - variables/provision.yml
+    
+  vars:
+    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"    
+    
+  pre_tasks:
+  
+    - name: Get datacenter.json content
+      set_fact:
+        datacenter_config: "{{ lookup('file', '{{ datacenter_dir }}/config/datacenter.json') | from_json }}"
+          
+    - name: Get instance DNS domain
+      set_fact:
+        instance_dns_domain: '{{ datacenter_config | json_query(jquery) }}'
+      vars:
+        jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'
+        
+    - name: 'Test it! https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
+      become: false
+      ansible.builtin.uri:
+        url: 'https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
+        method: GET
+        status_code: 200
+        validate_certs: false
+        return_content: true
+      register: result
+      ignore_errors: true
+      
+    - name: End the play if Nginx test page is online
+      ansible.builtin.meta: end_play
+      when:
+        - '''Running on '' in result.content'
+        
+    - name: Controller host configuration
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'AWS instance domain: {{ instance_dns_domain }}'
+          - 'Python version used in the host: {{ aws.instance.python.version }}'
+          
+  tasks:
+  
+    - name: Ensure Nginx is installed
+      become: true
+      ansible.builtin.package:
+        name: nginx
+        update_cache: true
+        
+    - name: Create directories for Nginx TLS certificates
+      become: true
+      ansible.builtin.file:
+        path: '{{ aws.instance.nginx.tls.dir.path }}'
+        state: directory
+        mode: 488
+        
+    - name: Create Nginx tls certificates
+      become: true
+      ansible.builtin.command: 'openssl req -new -x509 -nodes -out {{ aws.instance.nginx.tls.cert.file }} -keyout {{ aws.instance.nginx.tls.key.file }} -subj /CN={{ instance_dns_domain }} -days 365'
+      args:
+        chdir: '{{ aws.instance.nginx.tls.dir.path }}'
+      ignore_errors: true
+      
+    - name: Remove the default Nginx config file
+      become: true
+      ansible.builtin.file:
+        path: '{{ aws.instance.nginx.install.dir.path }}/nginx.conf'
+        state: absent
+        
+    - name: Deploy Nginx config file
+      become: true
+      ansible.builtin.template:
+        src: nginx/nginx.conf.j2
+        dest: '{{ aws.instance.nginx.install.dir.path }}/nginx.conf'
+        mode: 436
+        
+    - name: index.html file
+      become: true
+      ansible.builtin.template:
+        src: nginx/index.html.j2
+        dest: '{{ aws.instance.nginx.root.dir.path }}/index.html'
+        mode: 436
+        
+    - name: Restart Nginx service
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+        enabled: true
+        
+    - name: 'Test it! http://{{ instance_dns_domain }}:{{ aws.instance.nginx.http.port }}/index.html'
+      become: false
+      ansible.builtin.uri:
+        url:  http://{{ instance_dns_domain }}:{{ aws.instance.nginx.http.port }}/index.html
+        method: GET
+        status_code: 200
+        return_content: true
+      register: result
+      failed_when: '''Running on '' not in result.content'
+      ignore_errors: true
+      
+    - name: 'Test it! https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
+      become: false
+      ansible.builtin.uri:
+        url: 'https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
+        method: GET
+        status_code: 200
+        validate_certs: false
+        return_content: true
+      register: result
+      failed_when: '''Running on '' not in result.content'
+      ignore_errors: true

@@ -1,0 +1,72 @@
+---
+
+aws:
+  instance: 
+    download:
+      dir:
+        path: /opt/download  
+    programs:
+      install:
+        dir:
+          path: /opt   
+    java:
+      version: "18.0.2.1"
+      download:
+        url: "https://download.java.net/java/GA/jdk18.0.2.1/db379da656dc47308e138f21b33976fa/1/GPL/openjdk-18.0.2.1_linux-x64_bin.tar.gz"   
+      root:
+        dir: 
+          name: "jdk-18.0.2.1"                   
+    tomcat:
+      version: "10.1.23"
+      download:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.23/bin/apache-tomcat-10.1.23.tar.gz"            
+      root:
+        dir:
+          name: apache-tomcat-10.1.23      
+      tls:
+        keystore:
+          file: "tomcat.jks"          
+      http:
+        port: "8090"
+      https:
+        port: "8444"              
+    python:
+      version: "3.11.4"
+      download:
+        url: "https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tar.xz"    
+      install:
+        dir:
+          path: /usr/local/bin   
+      executable: "python3.11"
+    openssl:
+      version: "1.1.1u"
+      download:
+        url: "https://ftp.openssl.org/source/openssl-1.1.1u.tar.gz"    
+      lib:
+        dir: /opt/openssl/lib/
+      bin:
+        dir: /usr/bin/
+    nginx:
+      install:
+         dir:
+           path: "/etc/nginx"
+      root:
+        dir:
+          path: "/usr/share/nginx/html"           
+      tls:
+        dir:
+          path: "/etc/nginx/ssl/"
+        key:
+          file: "nginx.key"
+        cert:
+          file: "nginx.crt"
+      http:
+        port: "8080"
+      https:
+        port: "8443"
+    postgresql:
+      version: "14"
+      download:
+        url: "https://download.postgresql.org/pub/repos/yum/14/redhat/rhel-7-x86_64"
+        
+...

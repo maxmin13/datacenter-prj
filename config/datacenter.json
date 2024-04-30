@@ -1,0 +1,128 @@
+{
+	"Datacenter": {
+		"VPC": {
+			"Description": "AWS VPC",
+			"Name": "dtc-datacenter",
+			"Cidr": "10.0.0.0/16",
+			"Region": "eu-west-1",
+			"Tags": [
+				{
+					"Key": "class",
+					"Value": "webservices"
+				}
+			]
+		},
+		"InternetGateway": {
+			"Name": "dtc-gateway",
+			"Tags": [
+				{
+					"Key": "class",
+					"Value": "webservices"
+				}
+			]
+		},
+		"RouteTable": {
+			"Name": "dtc-routetable",
+			"Tags": [
+				{
+					"Key": "class",
+					"Value": "webservices"
+				}
+			]
+		},
+		"Subnets": [
+			{
+				"Description": "AWS network shared by the instances.",
+				"Name": "dtc-subnet",
+				"Az": "eu-west-1a",
+				"Cidr": "10.0.20.0/24",
+				"Tags": [
+					{
+						"Key": "class",
+						"Value": "webservices"
+					}
+				]
+			}
+		],
+		"SecurityGroups": [
+			{
+				"Description": "Datacenter instance security group.",
+				"Name": "dtc-sgp",
+				"Rules": [
+					{
+						"FromPort": -1,
+						"ToPort": -1,
+						"Protocol": "icmp",
+						"Cidr": "0.0.0.0/0",
+						"Description": "Ping access"
+					},
+					{
+						"FromPort": 22,
+						"ToPort": 22,
+						"Protocol": "tcp",
+						"Cidr": "0.0.0.0/0",
+						"Description": "SSH access"
+					},
+					{
+						"FromPort": 8080,
+						"ToPort": 8080,
+						"Protocol": "tcp",
+						"Cidr": "0.0.0.0/0",
+						"Description": "Nginx HTTP access"
+					},
+					{
+						"FromPort": 8443,
+						"ToPort": 8443,
+						"Protocol": "tcp",
+						"Cidr": "0.0.0.0/0",
+						"Description": "Nginx HTTPS access"
+					},
+					{
+						"FromPort": 5432,
+						"ToPort": 5432,
+						"Protocol": "tcp",
+						"Cidr": "0.0.0.0/0",
+						"Description": "PostgreSQL access"
+					}
+				],
+				"Tags": [
+					{
+						"Key": "class",
+						"Value": "webservices"
+					}
+				]
+			}
+		],
+		"Instances": [
+			{
+				"Name": "dtc-box",
+				"UserName": "dtcadmin",
+				"UserPassword": "dtcadmin",
+				"PrivateIp": "10.0.20.35",
+				"SecurityGroup": "dtc-sgp",
+				"Subnet": "dtc-subnet",
+				"ParentImage": "amzn2-ami-kernel-5.10-hvm-2.0.20230719.0-x86_64-gp2",
+				"DnsDomain": "dtc.maxmin.it",
+				"HostName": "local.dtc.maxmin.it",
+				"Tags": [
+					{
+						"Key": "database",
+						"Value": "postgresql"
+					},
+					{
+						"Key": "program",
+						"Value": "python"
+					},
+					{
+						"Key": "security",
+						"Value": "openssl"
+					},
+					{
+						"Key": "webserver",
+						"Value": "nginx"
+					}
+				]
+			}
+		]
+	}
+}

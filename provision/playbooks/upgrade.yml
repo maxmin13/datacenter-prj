@@ -1,0 +1,35 @@
+- name: Install common programs
+  hosts:
+    - all
+  gather_facts: false
+
+  vars_files:
+    - variables/vars.yml
+    - variables/provision.yml
+      
+  pre_tasks:
+  
+    - name: 'Controller host configuration'
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+
+  tasks:
+    - name: update yum cache
+      ansible.builtin.yum: update_cache=true
+  
+    - name: upgrade all packages
+      become: true
+      ansible.builtin.yum: name=* state=latest 
+                         
+    - name: Install a list of packages 
+      become: true
+      ansible.builtin.yum:
+        name:
+          - supervisor
+          - git
+          - vim         
+        state: present
+        

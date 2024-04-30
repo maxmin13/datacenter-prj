@@ -1,0 +1,19 @@
+
+############################################
+catch AWSDaoException in services
+
+############################
+
+availability zone should be a parameter in the tests
+
+#############################
+
+in instancService replace import crypt 
+deprecated
+
+########################################
+
+datacenter.json take UserName and UserPassword
+move then in a vault
+
+
