@@ -18,7 +18,6 @@
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
           - 'OpenSSL version: {{ aws.instance.openssl.version }}'
-          - 'OpenSSL executable: openssl'
           
     - name: Openssl version
       ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'

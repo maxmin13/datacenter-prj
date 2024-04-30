@@ -17,7 +17,7 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'Phython version: {{ aws.instance.python.version }}'
+          - 'Python version used in the host: {{ aws.instance.python.version }}'
           
     - name: Openssl version
       ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'

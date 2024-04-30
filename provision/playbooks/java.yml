@@ -33,7 +33,13 @@
     - name: "Fetch JAVA_HOME"
       shell: source /etc/profile; dirname $(dirname $(readlink -f $(which javac)))	
       register: java_home
-      ignore_errors: true       
+      ignore_errors: true 
+      
+    - name: debug java
+      ansible.builtin.debug:
+        msg:
+          - 'java_version: {{ java_version }}'  
+          - 'java_home: {{ java_home }}'       
                     
     - name: End the play if Java is installed
       ansible.builtin.meta: end_play
