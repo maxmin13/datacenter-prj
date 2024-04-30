@@ -31,7 +31,8 @@
     - name: Debug md version
       ansible.builtin.debug:
         msg:
-          - 'mariadb_version: {{ mariadb_version }}'      
+          - 'mariadb_version: {{ mariadb_version }}'   
+          - (mariadb_version.stdout | int) is version_compare(MARIADB_VERSION, '>='   
         
     - name: End the play if MariaDB is installed
       ansible.builtin.meta: end_play
