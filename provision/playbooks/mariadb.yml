@@ -27,6 +27,11 @@
     - name: Fetch MariaDB	 version
       shell: mariadb --version 2>&1 | awk '{print $3}' | sed 's/"//g'
       register: mariadb_version
+      
+    - name: Debug md version
+      ansible.builtin.debug:
+        msg:
+          - 'mariadb_version: {{ mariadb_version }}'      
         
     - name: End the play if MariaDB is installed
       ansible.builtin.meta: end_play
