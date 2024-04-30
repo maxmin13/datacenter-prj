@@ -36,7 +36,7 @@
     - name: End the play if MariaDB is installed
       ansible.builtin.meta: end_play
       when:
-        - mariadb_version.stdout | length > 0 and mariadb_version.stdout is version_compare('aws.instance.mariadb.version', '>=')     
+        - mariadb_version.stdout | length > 0 and mariadb_version.stdout is version_compare(aws.instance.mariadb.version, '>=')     
       ignore_errors: true
                                                 
   tasks:
