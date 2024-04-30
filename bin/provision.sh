@@ -63,15 +63,6 @@ ANSIBLE_PLAYBOOK_CMD="${DATACENTER_DIR}"/.venv/bin/ansible-playbook
 
 cd "${DATACENTER_DIR}"/provision || exit
 
-
-
-
-"${ANSIBLE_PLAYBOOK_CMD}" playbooks/mariadb.yml 
-exit
-exit
-exit
-exit
-
 ########################
 ##### UPDATE SYSTEM ####
 ########################
