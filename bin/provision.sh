@@ -44,7 +44,7 @@ then
 fi
 
 # directory where the datacenter project is downloaded from github
-# see: name_admin_box file
+# see: name_dtc_box file
 export DATACENTER_DIR
 DATACENTER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 

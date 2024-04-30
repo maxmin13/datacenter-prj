@@ -175,7 +175,18 @@ cd datacenter-prj/bin
 
 ./provision.sh
 
+###################################
+# Run a playbook by hand:
+###################################
 
+export AWS_ACCESS_KEY_ID=xxxxxx
+export AWS_SECRET_ACCESS_KEY=yyyyyy
+export AWS_DEFAULT_REGION=zzzzzz
+# export any variable required in the group_vars file loaded, ex:
+export DATACENTER_DIR=/home/vagrant/Downloads/datacenter-prj
+export BACKOFFICE_DIR=/home/vagrant/Downloads/backoffice-prj
 
+cd datacenter-prj/provision
 
+ansible-playbook playbooks/mariadb.yml
 
