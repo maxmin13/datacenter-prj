@@ -67,6 +67,6 @@ aws:
       download:
         url: "https://download.postgresql.org/pub/repos/yum/14/redhat/rhel-7-x86_64"
     mariadb:
-      version: 10.5
+      version: "10.5"
         
 ...
