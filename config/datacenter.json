@@ -113,12 +113,12 @@
 				"HostName": "local.dtc.maxmin.it",
 				"Tags": [
 					{
-						"Key": "database",
-						"Value": "postgresql"
-					},
-					{
 						"Key": "common",
 						"Value": "programs"
+					},
+					{
+						"Key": "database",
+						"Value": "postgresql"
 					},
 					{
 						"Key": "webserver",
