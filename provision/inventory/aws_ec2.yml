@@ -6,12 +6,12 @@ keyed_groups:
     prefix: class
   - key: tags.database
     prefix: database 
-  - key: tags.security
-    prefix: security
-  - key: tags.program
-    prefix: program 
   - key: tags.webserver
-    prefix: webserver            
+    prefix: webserver  
+  - key: tags.common
+    prefix: common    
+  - key: tags.jdk
+    prefix: jdk                 
 filters:
   instance-state-name: running
 compose:
