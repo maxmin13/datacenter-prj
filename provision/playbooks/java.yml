@@ -1,7 +1,7 @@
 - name: Install Java 18
 
   hosts:
-    - program_java
+    - jdk_install
     
   gather_facts: false
   

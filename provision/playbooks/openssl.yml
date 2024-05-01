@@ -1,7 +1,7 @@
 - name: Install Openssl
 
   hosts:
-    - security_openssl
+    - common_programs
     
   gather_facts: false
   

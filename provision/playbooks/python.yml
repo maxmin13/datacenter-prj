@@ -1,7 +1,7 @@
 - name: Install python 3.11.4
 
   hosts:
-    - program_python
+    - common_programs
     
   gather_facts: false
   

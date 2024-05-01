@@ -117,12 +117,8 @@
 						"Value": "postgresql"
 					},
 					{
-						"Key": "program",
-						"Value": "python"
-					},
-					{
-						"Key": "security",
-						"Value": "openssl"
+						"Key": "common",
+						"Value": "programs"
 					},
 					{
 						"Key": "webserver",
