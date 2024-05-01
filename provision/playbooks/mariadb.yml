@@ -11,8 +11,6 @@
 
   vars:
      MARIADB_VERSION: "{{ aws.instance.mariadb.version }}"  
-#     CATALINA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.tomcat.root.dir.name }}"
-#     HTTPS_PORT: "{{ aws.instance.tomcat.https.port }}"
     
   pre_tasks:
        
@@ -48,12 +46,33 @@
       ansible.builtin.command: 'yum install -y mariadb'       
       
     - name: Start MariaDB server
-      become: true
-      become_method: sudo     
+      become: true  
       ansible.builtin.systemd_service:
         state: restarted
         enabled: true
-        name: mariadb        
+        name: mariadb 
+        
+    - name: Secure MariaDB
+      become: true
+      expect:
+        command: mysql_secure_installation
+        responses:
+          'Enter current password for root': ''
+          'Set root password': '{{ mariadb_root_user_password }}'
+          'Remove anonymous users': 'y'
+          'Disallow root login remotely': 'y'
+          'Remove test database': 'y'
+          'Reload privilege tables now': 'y'
+        timeout: 1
+      register: secure_mariadb
+      failed_when: "'... Failed!' in secure_mariadb.stdout_lines"               
+
+    - name: Start MariaDB server
+      become: true  
+      ansible.builtin.systemd_service:
+        state: restarted
+        enabled: true
+        name: mariadb  
                  
   post_tasks:
   
