@@ -10,14 +10,6 @@
     - variables/provision.yml
     
   pre_tasks:
-  
-    - name: Configuration variables
-      ansible.builtin.debug:
-        msg:
-          - 'SSH instance port: {{ ansible_port }}'
-          - 'SSH instance user: {{ ansible_user }}'
-          - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'OpenSSL version: {{ aws.instance.openssl.version }}'
           
     - name: Openssl version
       ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
@@ -26,6 +18,14 @@
     - name: End the play if OpenSSL is already upgraded
       ansible.builtin.meta: end_play
       when: aws.instance.openssl.version in openssl_ver.stdout
+        
+    - name: Configuration variables
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'OpenSSL version: {{ aws.instance.openssl.version }}'      
       
     - name: Install packages
       become: true

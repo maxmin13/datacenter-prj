@@ -24,17 +24,7 @@
     - assert:
         that:
           - PYTHON_VERSION in python_ver.stdout    
-  
-    - name: Configuration variables
-      ansible.builtin.debug:
-        msg:
-          - 'SSH instance port: {{ ansible_port }}'
-          - 'SSH instance user: {{ ansible_user }}'
-          - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'Python version: {{ PYTHON_VERSION }}'
-          - 'PostgreSql version: {{ POSTGRESQL_VERSION }}'
-          - 'PostgreSql super user: {{ postgresql_superuser }}'
-          
+            
     - name: PostgreSQL version
       ansible.builtin.shell: 'psql --version'
       register: psql_ver
@@ -43,6 +33,16 @@
     - name: End the play if PostgreSQL is already installed
       ansible.builtin.meta: end_play
       when: POSTGRESQL_VERSION in psql_ver.stdout
+      
+    - name: Configuration variables
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Python version: {{ PYTHON_VERSION }}'
+          - 'PostgreSql version: {{ POSTGRESQL_VERSION }}'
+          - 'PostgreSql super user: {{ postgresql_superuser }}'      
               
   tasks:
     - name: Remove Postgresql

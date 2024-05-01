@@ -15,16 +15,6 @@
     JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
     
   pre_tasks:
-  
-    - name: Configuration variables
-      ansible.builtin.debug:
-        msg:
-          - 'SSH instance port: {{ ansible_port }}'
-          - 'SSH instance user: {{ ansible_user }}'
-          - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'Python version: {{ PYTHON_VERSION }}' 
-          - 'Java version: {{ JAVA_VERSION }}' 
-          - 'Java home: {{ JAVA_HOME }}'  
           
     - name: Fetch Java version
       shell: source /etc/profile; java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
@@ -41,6 +31,16 @@
       when: 
         - (java_version.stdout | int > 0) and (java_version.stdout is version_compare(JAVA_VERSION, '>='))   
       ignore_errors: true
+        
+    - name: Configuration variables
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Python version: {{ PYTHON_VERSION }}' 
+          - 'Java version: {{ JAVA_VERSION }}' 
+          - 'Java home: {{ JAVA_HOME }}'        
  
     - name: Create download directory
       become: true
