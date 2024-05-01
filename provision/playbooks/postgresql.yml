@@ -10,18 +10,30 @@
     - variables/provision.yml
     
   vars:
-    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"    
+    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}" 
+    PYTHON_VERSION: "{{ aws.instance.python.version }}"
+    POSTGRESQL_VERSION: "{{ aws.instance.postgresql.version }}"    
     
   pre_tasks:
+  
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+      
+    - assert:
+        that:
+          - PYTHON_VERSION in python_ver.stdout    
+  
     - name: Configuration variables
       ansible.builtin.debug:
         msg:
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Python version: {{ PYTHON_VERSION }}'
+          - 'PostgreSql version: {{ POSTGRESQL_VERSION }}'
           - 'PostgreSql super user: {{ postgresql_superuser }}'
-          - 'PostgreSql version: {{ aws.instance.postgresql.version }}'
-          - 'Python version used in the host: {{ aws.instance.python.version }}'
           
     - name: PostgreSQL version
       ansible.builtin.shell: 'psql --version'
@@ -30,7 +42,7 @@
 
     - name: End the play if PostgreSQL is already installed
       ansible.builtin.meta: end_play
-      when: aws.instance.postgresql.version in psql_ver.stdout
+      when: POSTGRESQL_VERSION in psql_ver.stdout
               
   tasks:
     - name: Remove Postgresql
@@ -49,7 +61,7 @@
       become: true
       ansible.builtin.yum_repository:
         name: postgresql
-        description: 'postgresql {{ aws.instance.postgresql.version }}'
+        description: 'postgresql {{ POSTGRESQL_VERSION }}'
         baseurl: '{{ aws.instance.postgresql.download.url }}'
         
     - name: Install Postgresql packages
@@ -59,8 +71,8 @@
         disable_gpg_check: true
         state: present
         name:
-          - 'postgresql{{ aws.instance.postgresql.version }}'
-          - 'postgresql{{ aws.instance.postgresql.version }}-server'
+          - 'postgresql{{ POSTGRESQL_VERSION }}'
+          - 'postgresql{{ POSTGRESQL_VERSION }}-server'
           
     - name: Find out if Postgresql is initialized
       become: true
@@ -70,7 +82,7 @@
       
     - name: Initialize Postgresql
       become: true
-      ansible.builtin.shell: '/usr/pgsql-{{ aws.instance.postgresql.version }}/bin/postgresql-{{ aws.instance.postgresql.version }}-setup initdb'
+      ansible.builtin.shell: '/usr/pgsql-{{ POSTGRESQL_VERSION }}/bin/postgresql-{{ POSTGRESQL_VERSION }}-setup initdb'
       when: not postgres_data.stat.exists
       
     - name: Starting Postgresql services
@@ -118,4 +130,4 @@
 
     - ansible.builtin.assert:
         that:
-          - aws.instance.postgresql.version in psql_ver.stdout      
+          - POSTGRESQL_VERSION in psql_ver.stdout      

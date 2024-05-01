@@ -10,6 +10,7 @@
     - variables/secrets.yml
         
   vars:
+    PYTHON_VERSION: "{{ aws.instance.python.version }}"
     JAVA_VERSION: "{{ aws.instance.java.version }}"
     JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
     
@@ -21,7 +22,8 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'Java version used in the host: {{ JAVA_VERSION }}' 
+          - 'Python version: {{ PYTHON_VERSION }}' 
+          - 'Java version: {{ JAVA_VERSION }}' 
           - 'Java home: {{ JAVA_HOME }}'  
           
     - name: Fetch Java version

@@ -10,9 +10,20 @@
     - variables/secrets.yml
 
   vars:
+     ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
+     PYTHON_VERSION: "{{ aws.instance.python.version }}"
      MARIADB_VERSION: "{{ aws.instance.mariadb.version }}"  
     
   pre_tasks:
+  
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+      
+    - assert:
+        that:
+          - PYTHON_VERSION in python_ver.stdout           
        
     - name: Configuration variables
       ansible.builtin.debug:
@@ -20,6 +31,7 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Python version: {{ PYTHON_VERSION }}'
           - 'MariaDB version: {{ MARIADB_VERSION }}'
 
     - name: Fetch MariaDB version
@@ -32,6 +44,17 @@
         - (mariadb_version.stdout | int > 0) and (mariadb_version.stdout is version_compare(MARIADB_VERSION, '>='))     
                                                 
   tasks:
+
+    - name: Installs a list of packages
+      become: true
+      ansible.builtin.yum:
+        name:
+          - python3-devel
+          - mysql-devel
+      
+    - name: Install mysqlclient
+      become: true
+      pip: name=mysqlclient  
       
     - name: Add Amazon linux extras MariaDB repository
       become: true
@@ -52,10 +75,39 @@
         enabled: true
         name: mariadb 
         
+    - name: Adds Python MySQL support on RedHat/CentOS
+      yum: name=MySQL-python state=present
+      when: ansible_os_family == 'RedHat'        
+        
     - name: Sets the root password 
       become: true 
-      mysql_user: user=root password="{{ mariadb_root_user_password }}" host=localhost
-      no_log: true              
+      community.mysql.mysql_user: user=root password="{{ mariadb_root_user_password }}" host=localhost
+      no_log: false
+      
+    - name: Deletes anonymous MySQL server user for ansible_fqdn
+      community.mysql.mysql_user: user="" host="{{ ansible_fqdn }}" state="absent"
+
+    - name: Deletes anonymous MySQL server user for localhost
+      community.mysql.mysql_user: user="" state="absent"   
+      
+    - name: Secures the MySQL root user for IPV6 localhost (::1)
+      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="::1"
+      no_log: false
+
+    - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
+      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="127.0.0.1"
+      no_log: false 
+
+    - name: Secures the MySQL root user for localhost domain (localhost)
+      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="localhost"
+      no_log: false 
+
+    - name: Secures the MySQL root user for server_hostname domain
+      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="{{ ansible_fqdn }}"
+      no_log: false
+    
+    - name: Removes the MySQL test database
+      community.mysql.mysql_user: db=test state=absent                           
 
     - name: Start MariaDB server
       become: true  

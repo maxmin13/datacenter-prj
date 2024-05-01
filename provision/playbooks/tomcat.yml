@@ -10,6 +10,7 @@
     - variables/secrets.yml
 
   vars:
+     PYTHON_VERSION: "{{ aws.instance.python.version }}"
      JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
      CATALINA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.tomcat.root.dir.name }}"
      HTTPS_PORT: "{{ aws.instance.tomcat.https.port }}"
@@ -25,6 +26,15 @@
         instance_dns_domain: '{{ datacenter_config | json_query(jquery) }}'
       vars:
         jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'  
+        
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+      
+    - assert:
+        that:
+          - PYTHON_VERSION in python_ver.stdout         
      
     - name: Configuration variables
       ansible.builtin.debug:
@@ -32,6 +42,7 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Python version: {{ PYTHON_VERSION }}'
           - 'Java version: {{ aws.instance.java.version }}'
           - 'Java home: {{ JAVA_HOME }}' 
           - 'Tomcat version: {{ aws.instance.tomcat.version }}'  
