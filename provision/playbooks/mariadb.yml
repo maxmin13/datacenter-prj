@@ -1,9 +1,9 @@
-- name: Install Tomcat 10
+- name: Install MariaDB
 
   hosts:
     - database_mariadb
     
-  gather_facts: false
+  gather_facts: true
   
   vars_files:
     - variables/provision.yml
@@ -74,36 +74,54 @@
         state: restarted
         enabled: true
         name: mariadb 
-        
-    - name: Adds Python MySQL support on RedHat/CentOS
-      yum: name=MySQL-python state=present
-      when: ansible_os_family == 'RedHat'        
-        
+
     - name: Sets the root password 
       become: true 
       community.mysql.mysql_user: user=root password="{{ mariadb_root_user_password }}" host=localhost
       no_log: false
+      ignore_errors: true
       
-    - name: Deletes anonymous MySQL server user for ansible_fqdn
-      community.mysql.mysql_user: user="" host="{{ ansible_fqdn }}" state="absent"
+    - name: Deletes anonymous MySQL server user for ansible_hostname
+      community.mysql.mysql_user: 
+        name: ''
+        host: "{{ ansible_hostname }}"
+        state: absent
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"
 
     - name: Deletes anonymous MySQL server user for localhost
-      community.mysql.mysql_user: user="" state="absent"   
+      community.mysql.mysql_user: 
+        name: ''
+        state: absent
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"       
       
     - name: Secures the MySQL root user for IPV6 localhost (::1)
-      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="::1"
+      community.mysql.mysql_user:
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"  
+        host: "::1"
       no_log: false
 
     - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
-      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="127.0.0.1"
-      no_log: false 
+      community.mysql.mysql_user:
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"  
+        host: "127.0.0.1"
+      no_log: false
 
     - name: Secures the MySQL root user for localhost domain (localhost)
-      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="localhost"
-      no_log: false 
+      community.mysql.mysql_user:
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"  
+        host: "localhost"
+      no_log: false
 
     - name: Secures the MySQL root user for server_hostname domain
-      community.mysql.mysql_user: user="root" password="{{ mariadb_root_user_password }}" host="{{ ansible_fqdn }}"
+      community.mysql.mysql_user:
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"  
+        host: "{{ ansible_hostname }}"
       no_log: false
     
     - name: Removes the MySQL test database
@@ -115,9 +133,3 @@
         state: restarted
         enabled: true
         name: mariadb  
-                 
-  post_tasks:
-  
- 
-                
-                      
