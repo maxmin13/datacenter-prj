@@ -52,20 +52,9 @@
         enabled: true
         name: mariadb 
         
-    - name: Secure MariaDB
-      become: true
-      expect:
-        command: mysql_secure_installation
-        responses:
-          'Enter current password for root': ''
-          'Set root password': '{{ mariadb_root_user_password }}'
-          'Remove anonymous users': 'y'
-          'Disallow root login remotely': 'y'
-          'Remove test database': 'y'
-          'Reload privilege tables now': 'y'
-        timeout: 1
-      register: secure_mariadb
-      failed_when: "'... Failed!' in secure_mariadb.stdout_lines"               
+    - name: Sets the root password 
+      mysql_user: user=root password="{{ mariadb_root_user_password }}" host=localhost
+      no_log: true              
 
     - name: Start MariaDB server
       become: true  

@@ -9,6 +9,10 @@
     - variables/vars.yml
     - variables/provision.yml
     
+  vars:
+     OPENSSL_VERSION: "{{ aws.instance.openssl.version }}"
+     PYTHON_VERSION: "{{ aws.instance.python.version }}"
+    
   pre_tasks:
   
     - name: Configuration variables
@@ -17,7 +21,7 @@
           - 'SSH instance port: {{ ansible_port }}'
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
-          - 'Python version used in the host: {{ aws.instance.python.version }}'
+          - 'Python version used in the host: {{ PYTHON_VERSION }}'
           
     - name: Openssl version
       ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
@@ -25,7 +29,7 @@
       
     - assert:
         that:
-          - aws.instance.openssl.version in openssl_ver.stdout     
+          - OPENSSL_VERSION in openssl_ver.stdout     
           
     - name: Python version
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
@@ -34,7 +38,7 @@
       
     - name: End the play if Python is already upgraded
       ansible.builtin.meta: end_play
-      when: aws.instance.python.version in python_ver.stdout
+      when: PYTHON_VERSION in python_ver.stdout
       
     - name: Installs a list of packages
       become: true
@@ -100,7 +104,7 @@
       debug: 'msg="{{ python_ver }}"'
     - ansible.builtin.assert:
         that:
-          - aws.instance.python.version in python_ver.stdout
+          - PYTHON_VERSION in python_ver.stdout
           
   post_tasks:
   
