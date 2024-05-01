@@ -98,6 +98,8 @@
       
     - name: Secures the MySQL root user for IPV6 localhost (::1)
       community.mysql.mysql_user:
+        user: root
+        password: "{{ mariadb_root_user_password }}"
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"  
         host: "::1"
@@ -105,6 +107,8 @@
 
     - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
       community.mysql.mysql_user:
+        user: root
+        password: "{{ mariadb_root_user_password }}"
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"  
         host: "127.0.0.1"
@@ -112,6 +116,8 @@
 
     - name: Secures the MySQL root user for localhost domain (localhost)
       community.mysql.mysql_user:
+        user: root
+        password: "{{ mariadb_root_user_password }}"
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"  
         host: "localhost"
@@ -119,13 +125,19 @@
 
     - name: Secures the MySQL root user for server_hostname domain
       community.mysql.mysql_user:
+        user: root
+        password: "{{ mariadb_root_user_password }}"
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"  
         host: "{{ ansible_hostname }}"
       no_log: false
     
     - name: Removes the MySQL test database
-      community.mysql.mysql_user: db=test state=absent                           
+      community.mysql.mysql_db:
+        db: test
+        state: absent         
+        login_user: root
+        login_password: "{{ mariadb_root_user_password }}"                       
 
     - name: Start MariaDB server
       become: true  
