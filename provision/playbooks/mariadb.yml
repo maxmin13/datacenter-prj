@@ -54,7 +54,10 @@
       
     - name: Install mysqlclient
       become: true
-      pip: name=mysqlclient  
+      pip: 
+        name: 
+          - wheel
+          - mysqlclient  
       
     - name: Add Amazon linux extras MariaDB repository
       become: true
