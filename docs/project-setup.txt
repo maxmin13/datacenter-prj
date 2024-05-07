@@ -190,5 +190,5 @@ source .venv/bin/activate
 
 cd datacenter-prj/provision
 
-ansible-playbook playbooks/mariadb.yml
+ansible-playbook playbooks/java.yml
 

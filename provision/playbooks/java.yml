@@ -10,6 +10,7 @@
     - variables/secrets.yml
         
   vars:
+    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
     PYTHON_VERSION: "{{ aws.instance.python.version }}"
     JAVA_VERSION: "{{ aws.instance.java.version }}"
     JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
@@ -29,7 +30,8 @@
     - name: End the play if Java is installed
       ansible.builtin.meta: end_play
       when: 
-        - (java_version.stdout | int > 0) and (java_version.stdout is version_compare(JAVA_VERSION, '>='))   
+        - java_version.stdout | length > 0
+        - java_version.stdout is version_compare(JAVA_VERSION, '>=')   
       ignore_errors: true
         
     - name: Configuration variables
