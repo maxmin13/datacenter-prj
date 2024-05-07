@@ -52,13 +52,10 @@
           - python3-devel
           - mysql-devel
       
-    - name: Install mysqlclient
+    - name: Install PyMySQL
       become: true
-      pip: 
-        name: 
-          - wheel
-          - mysqlclient  
-      
+      pip: name=PyMySQL
+   
     - name: Add Amazon linux extras MariaDB repository
       become: true
       ansible.builtin.command: 'amazon-linux-extras enable mariadb{{ MARIADB_VERSION }}'
