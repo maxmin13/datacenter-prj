@@ -82,6 +82,7 @@
         name: root
         host: "localhost"
         password: "{{ mariadb_root_user_password }}"
+        login_unix_socket: /var/lib/mysql/mysql.sock
         check_implicit_admin: yes
         login_user: "root"
         login_password: ""
