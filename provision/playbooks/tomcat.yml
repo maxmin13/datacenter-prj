@@ -26,7 +26,23 @@
         instance_dns_domain: '{{ datacenter_config | json_query(jquery) }}'
       vars:
         jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'  
-        
+          
+    - name: 'Test it! https://{{ instance_dns_domain }}:8443/'
+      become: false
+      ansible.builtin.uri:
+        url: 'https://{{ instance_dns_domain }}:8443/'
+        method: GET
+        status_code: 200
+        validate_certs: false
+        return_content: true
+      register: result
+      ignore_errors: true
+       
+    - name: End the play if Tomcat test page is online
+      ansible.builtin.meta: end_play
+      when:
+        - "'successfully installed Tomcat' in result.content"
+            
     - name: Python version
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
       register: python_ver
@@ -47,23 +63,7 @@
     - assert:
         that:
           - java_version.stdout | length > 0 and java_version.stdout is version_compare('18', '>=') 
-          - java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME  
-          
-    - name: 'Test it! https://{{ instance_dns_domain }}:8443/'
-      become: false
-      ansible.builtin.uri:
-        url: 'https://{{ instance_dns_domain }}:8443/'
-        method: GET
-        status_code: 200
-        validate_certs: false
-        return_content: true
-      register: result
-      ignore_errors: true
-       
-    - name: End the play if Tomcat test page is online
-      ansible.builtin.meta: end_play
-      when:
-        - "'successfully installed Tomcat' in result.content"
+          - java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME          
      
     - name: Configuration variables
       ansible.builtin.debug:
