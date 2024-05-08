@@ -14,15 +14,7 @@
      PYTHON_VERSION: "{{ aws.instance.python.version }}"
     
   pre_tasks:
-          
-    - name: Openssl version
-      ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
-      register: openssl_ver
-      
-    - assert:
-        that:
-          - OPENSSL_VERSION in openssl_ver.stdout     
-          
+              
     - name: Python version
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
       register: python_ver
@@ -31,6 +23,14 @@
     - name: End the play if Python is already upgraded
       ansible.builtin.meta: end_play
       when: PYTHON_VERSION in python_ver.stdout
+                
+    - name: Openssl version
+      ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
+      register: openssl_ver
+      
+    - assert:
+        that:
+          - OPENSSL_VERSION in openssl_ver.stdout      
       
     - name: Configuration variables
       ansible.builtin.debug:
