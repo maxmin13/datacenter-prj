@@ -76,9 +76,10 @@
         enabled: true
         name: mariadb 
 
-    - name: Set Mariadb root password (works only the first run, then ignore_errors)
+    - name: Set Mariadb root password
       become: true
       ignore_errors: true
+      check_implicit_admin: true
       mysql_user:
         name: root
         host: "localhost"
@@ -86,7 +87,7 @@
         login_unix_socket: /var/lib/mysql/mysql.sock
         check_implicit_admin: yes
         login_user: "root"
-        login_password: ""
+        login_password: "{{ mariadb_root_user_password }}"
         state: present
            
     - name: Deletes anonymous MySQL server user for ansible_hostname
