@@ -127,4 +127,3 @@ echo "MariaDB ..."
 
 "${ANSIBLE_PLAYBOOK_CMD}" playbooks/mariadb.yml 
 
-echo "Datacenter provisioned."
