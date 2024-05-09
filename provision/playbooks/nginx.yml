@@ -25,15 +25,6 @@
       vars:
         jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'
         
-    - name: Python version
-      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
-      register: python_ver
-      ignore_errors: true
-      
-    - assert:
-        that:
-          - PYTHON_VERSION in python_ver.stdout          
-        
     - name: 'Test it! https://{{ instance_dns_domain }}:{{ aws.instance.nginx.https.port }}/index.html'
       become: false
       ansible.builtin.uri:
@@ -48,7 +39,17 @@
     - name: End the play if Nginx test page is online
       ansible.builtin.meta: end_play
       when:
-        - '''Running on '' in result.content'
+        - '''Running on '' in result.content'        
+        
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+                 
+    - name: End the play if the correct version of Python is not installed
+      ansible.builtin.meta: end_play
+      when:
+        - PYTHON_VERSION not in python_ver.stdout         
         
     - name: Configuration variables
       ansible.builtin.debug:

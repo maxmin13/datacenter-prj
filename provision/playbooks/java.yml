@@ -29,6 +29,16 @@
         - java_version.stdout is version_compare(JAVA_VERSION, '>=')   
       ignore_errors: true
       
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+                 
+    - name: End the play if the correct version of Python is not installed
+      ansible.builtin.meta: end_play
+      when:
+        - PYTHON_VERSION not in python_ver.stdout       
+      
     - name: "Fetch JAVA_HOME"
       shell: source /etc/profile; dirname $(dirname $(readlink -f $(which javac)))	
       register: java_home

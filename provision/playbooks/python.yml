@@ -19,18 +19,19 @@
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
       register: python_ver
       ignore_errors: true
-      
-    - name: End the play if Python is already upgraded
+                 
+    - name: End the play if the correct version of Python is already installed
       ansible.builtin.meta: end_play
-      when: PYTHON_VERSION in python_ver.stdout
+      when:
+        - PYTHON_VERSION in python_ver.stdout    
                 
     - name: Openssl version
       ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
       register: openssl_ver
       
-    - assert:
-        that:
-          - OPENSSL_VERSION in openssl_ver.stdout      
+    - name: End the play if OpenSSL is not upgraded
+      ansible.builtin.meta: end_play
+      when: aws.instance.openssl.version not in openssl_ver.stdout    
       
     - name: Configuration variables
       ansible.builtin.debug:

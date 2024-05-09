@@ -47,10 +47,11 @@
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
       register: python_ver
       ignore_errors: true
-      
-    - assert:
-        that:
-          - PYTHON_VERSION in python_ver.stdout         
+                 
+    - name: End the play if the correct version of Python is not installed
+      ansible.builtin.meta: end_play
+      when:
+        - PYTHON_VERSION not in python_ver.stdout         
 
     - name: Fetch Java version
       shell: source /etc/profile; java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
@@ -63,7 +64,13 @@
     - assert:
         that:
           - java_version.stdout | length > 0 and java_version.stdout is version_compare('18', '>=') 
-          - java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME          
+          - java_home.stdout | length > 0 and java_home.stdout == JAVA_HOME      
+          
+    - name: End the play if Java is not installed
+      ansible.builtin.meta: end_play
+      when:
+          - java_version.stdout | length > 0 and java_version.stdout is version_compare('18', '<<') 
+          - java_home.stdout | length == 0 or java_home.stdout != JAVA_HOME              
      
     - name: Configuration variables
       ansible.builtin.debug:

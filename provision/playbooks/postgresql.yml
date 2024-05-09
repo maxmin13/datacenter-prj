@@ -15,16 +15,7 @@
     POSTGRESQL_VERSION: "{{ aws.instance.postgresql.version }}"    
     
   pre_tasks:
-  
-    - name: Python version
-      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
-      register: python_ver
-      ignore_errors: true
-      
-    - assert:
-        that:
-          - PYTHON_VERSION in python_ver.stdout    
-            
+              
     - name: PostgreSQL version
       ansible.builtin.shell: 'psql --version'
       register: psql_ver
@@ -33,6 +24,16 @@
     - name: End the play if PostgreSQL is already installed
       ansible.builtin.meta: end_play
       when: POSTGRESQL_VERSION in psql_ver.stdout
+      
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+                 
+    - name: End the play if the correct version of Python is not installed
+      ansible.builtin.meta: end_play
+      when:
+        - PYTHON_VERSION not in python_ver.stdout          
       
     - name: Configuration variables
       ansible.builtin.debug:

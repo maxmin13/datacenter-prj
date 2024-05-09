@@ -25,16 +25,11 @@
       when:
         - (mariadb_version.stdout | int > 0) and (mariadb_version.stdout is version_compare(MARIADB_VERSION, '>='))  
         
-
     - name: Python version
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
       register: python_ver
       ignore_errors: true
-      
-    - assert:
-        that:
-          - PYTHON_VERSION in python_ver.stdout         
-          
+                 
     - name: End the play if the correct version of Python is not installed
       ansible.builtin.meta: end_play
       when:
