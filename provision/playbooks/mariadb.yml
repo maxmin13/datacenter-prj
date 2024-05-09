@@ -30,10 +30,9 @@
       register: python_ver
       ignore_errors: true
                  
-    - name: End the play if the correct version of Python is not installed
-      ansible.builtin.meta: end_play
-      when:
-        - PYTHON_VERSION not in python_ver.stdout             
+    - assert:
+        that:
+          - PYTHON_VERSION in python_ver.stdout                
 
     - name: Configuration variables
       ansible.builtin.debug:

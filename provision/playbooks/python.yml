@@ -28,10 +28,10 @@
     - name: Openssl version
       ansible.builtin.shell: 'source /home/{{ ansible_user }}/.bash_profile && openssl version'
       register: openssl_ver
-      
-    - name: End the play if OpenSSL is not upgraded
-      ansible.builtin.meta: end_play
-      when: aws.instance.openssl.version not in openssl_ver.stdout    
+     
+    - assert:
+        that:
+          - aws.instance.openssl.version in openssl_ver.stdout         
       
     - name: Configuration variables
       ansible.builtin.debug:
