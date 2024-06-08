@@ -104,13 +104,13 @@
         url: "{{ aws.instance.tomcat.download.url }}"
         dest: "{{ aws.instance.download.dir.path }}/apache-tomcat.tar.gz"
         
-    - name: Return motd to registered var
+    - name: Create CATALINA_HOME directory
       become: true
       ansible.builtin.command: mkdir "{{ CATALINA_HOME }}"   
              
-    - name: Return motd to registered var
+    - name: Extract tomcat
       become: true
-      ansible.builtin.command: tar xf "{{ aws.instance.download.dir.path }}"/apache-tomcat.tar.gz -C "{{ CATALINA_HOME }}" --strip-components 1              
+      ansible.builtin.command: tar xf "{{ aws.instance.download.dir.path }}"/apache-tomcat.tar.gz -C "{{ CATALINA_HOME }}"              
                 
     - name: Configure Tomcat server
       become: true
