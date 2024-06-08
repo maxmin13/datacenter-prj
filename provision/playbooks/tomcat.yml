@@ -106,7 +106,7 @@
         
     - name: Return motd to registered var
       become: true
-      ansible.builtin.command: mkdir {{ CATALINA_HOME }} && tar xf {{ aws.instance.download.dir.path }}/apache-tomcat.tar.gz -C {{ CATALINA_HOME }} --strip-components 1   
+      ansible.builtin.command: mkdir "{{ CATALINA_HOME }}" && tar xf "{{ aws.instance.download.dir.path }}"/apache-tomcat.tar.gz -C "{{ CATALINA_HOME }}" --strip-components 1   
                 
     - name: Configure Tomcat server
       become: true
