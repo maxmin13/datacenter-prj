@@ -39,7 +39,7 @@ aws:
     openssl:
       version: "1.1.1u"
       download:
-        url: "https://ftp.openssl.org/source/openssl-1.1.1u.tar.gz"    
+        url: "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1u.tar.gz"    
       lib:
         dir: /opt/openssl/lib/
       bin:
