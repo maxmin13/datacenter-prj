@@ -110,7 +110,7 @@
              
     - name: Extract tomcat
       become: true
-      ansible.builtin.command: tar xf "{{ aws.instance.download.dir.path }}"/apache-tomcat.tar.gz -C "{{ CATALINA_HOME }}"              
+      ansible.builtin.command: tar xf "{{ aws.instance.download.dir.path }}"/apache-tomcat.tar.gz -C "{{ CATALINA_HOME }}" --strip-components 1              
                 
     - name: Configure Tomcat server
       become: true
