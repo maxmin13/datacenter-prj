@@ -76,6 +76,7 @@
           - 'Java home: {{ JAVA_HOME }}' 
           - 'Tomcat version: {{ aws.instance.tomcat.version }}'  
           - 'Tomcat HTTPS port: {{ HTTPS_PORT }}' 
+          - 'Catalina home: {{ CATALINA_HOME }}'
                  
     - name: Create download directory
       become: true
