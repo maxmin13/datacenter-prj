@@ -19,7 +19,7 @@ aws:
     tomcat:
       version: "10.1.23"
       download:
-        url: "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.23/bin/apache-tomcat-10.1.23.tar.gz"            
+        url: "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.23/src/apache-tomcat-10.1.23-src.tar.gz"            
       root:
         dir:
           name: apache-tomcat-10.1.23      
