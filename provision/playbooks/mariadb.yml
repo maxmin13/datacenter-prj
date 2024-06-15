@@ -45,7 +45,7 @@
                                                           
   tasks:
 
-    - name: Installs a list of packages
+    - name: Install a list of packages
       become: true
       ansible.builtin.yum:
         name:
@@ -84,12 +84,11 @@
         host: "localhost"
         password: "{{ mariadb_root_user_password }}"
         login_unix_socket: /var/lib/mysql/mysql.sock
-        check_implicit_admin: yes
         login_user: "root"
         login_password: "{{ mariadb_root_user_password }}"
         state: present
            
-    - name: Deletes anonymous MySQL server user for ansible_hostname
+    - name: Delete anonymous MySQL server user for ansible_hostname
       community.mysql.mysql_user: 
         name: ''
         host: "{{ ansible_hostname }}"
@@ -97,14 +96,14 @@
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"
 
-    - name: Deletes anonymous MySQL server user for localhost
+    - name: Delete anonymous MySQL server user for localhost
       community.mysql.mysql_user: 
         name: ''
         state: absent
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"       
       
-    - name: Secures the MySQL root user for IPV6 localhost (::1)
+    - name: Secure the MySQL root user for IPV6 localhost (::1)
       community.mysql.mysql_user:
         user: root
         password: "{{ mariadb_root_user_password }}"
@@ -113,7 +112,7 @@
         host: "::1"
       no_log: false
 
-    - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
+    - name: Secure the MySQL root user for IPV4 localhost (127.0.0.1)
       community.mysql.mysql_user:
         user: root
         password: "{{ mariadb_root_user_password }}"
@@ -122,7 +121,7 @@
         host: "127.0.0.1"
       no_log: false
 
-    - name: Secures the MySQL root user for localhost domain (localhost)
+    - name: Secure the MySQL root user for localhost domain (localhost)
       community.mysql.mysql_user:
         user: root
         password: "{{ mariadb_root_user_password }}"
@@ -131,7 +130,7 @@
         host: "localhost"
       no_log: false
 
-    - name: Secures the MySQL root user for server_hostname domain
+    - name: Secure the MySQL root user for server_hostname domain
       community.mysql.mysql_user:
         user: root
         password: "{{ mariadb_root_user_password }}"
@@ -140,7 +139,7 @@
         host: "{{ ansible_hostname }}"
       no_log: false
     
-    - name: Removes the MySQL test database
+    - name: Remove the MySQL test database
       community.mysql.mysql_db:
         db: test
         state: absent         
