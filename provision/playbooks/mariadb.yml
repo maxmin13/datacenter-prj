@@ -66,7 +66,13 @@
 
     - name: Install MariaDB
       become: true
-      ansible.builtin.command: 'yum install -y mariadb'       
+      ansible.builtin.command: 'yum install -y mariadb'   
+      
+    - name: Upload MariaDB configuration file
+      copy:
+        src: mariadb/mariadb-server.cnf
+        dest: "{{ aws.instance.mariadb.config.dir.path }}"
+        mode: '0644'          
       
     - name: Start MariaDB server
       become: true  
