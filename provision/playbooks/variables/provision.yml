@@ -17,6 +17,7 @@ aws:
         dir: 
           name: "jdk-18.0.2.1" 
     docker:
+      version: "25"
       compose:
         download:
           url: "https://github.com/docker/compose/releases/download/v2.11.2/docker-compose-Linux-x86_64"                  

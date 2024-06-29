@@ -11,7 +11,7 @@
   vars:
      ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
      PYTHON_VERSION: "{{ aws.instance.python.version }}"
-    
+     DOCKER_VERSION: "{{ aws.instance.docker.version }}"
   pre_tasks:
            
     - name: Python version
@@ -21,8 +21,17 @@
                  
     - assert:
         that:
-          - PYTHON_VERSION in python_ver.stdout                
-
+          - PYTHON_VERSION in python_ver.stdout   
+          
+    - name: Fetch Docker version
+      shell: docker -v | cut -b 16-19
+      register: docker_version
+          
+    - name: End the play if Docker is installed
+      ansible.builtin.meta: end_play
+      when:
+        - (docker_version.stdout | int > 0) and (docker_version.stdout is version_compare(DOCKER_VERSION, '>='))  
+                  
     - name: Configuration variables
       ansible.builtin.debug:
         msg:
