@@ -110,40 +110,13 @@
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"       
       
-    - name: Secure the MySQL root user for IPV6 localhost (::1)
+    - name: Allow root to remote connect from every host (for phpMyadmin)
       community.mysql.mysql_user:
         user: root
         password: "{{ mariadb_root_user_password }}"
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"  
-        host: "::1"
-      no_log: false
-
-    - name: Secure the MySQL root user for IPV4 localhost (127.0.0.1)
-      community.mysql.mysql_user:
-        user: root
-        password: "{{ mariadb_root_user_password }}"
-        login_user: root
-        login_password: "{{ mariadb_root_user_password }}"  
-        host: "127.0.0.1"
-      no_log: false
-
-    - name: Secure the MySQL root user for localhost domain (localhost)
-      community.mysql.mysql_user:
-        user: root
-        password: "{{ mariadb_root_user_password }}"
-        login_user: root
-        login_password: "{{ mariadb_root_user_password }}"  
-        host: "localhost"
-      no_log: false
-
-    - name: Secure the MySQL root user for server_hostname domain
-      community.mysql.mysql_user:
-        user: root
-        password: "{{ mariadb_root_user_password }}"
-        login_user: root
-        login_password: "{{ mariadb_root_user_password }}"  
-        host: "{{ ansible_hostname }}"
+        host: "%"
       no_log: false
     
     - name: Remove the MySQL test database
