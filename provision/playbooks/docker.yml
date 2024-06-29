@@ -1,0 +1,62 @@
+- name: Install Docker
+
+  hosts:
+    - common_programs
+    
+  gather_facts: true
+  
+  vars_files:
+    - variables/provision.yml
+
+  vars:
+     ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
+     PYTHON_VERSION: "{{ aws.instance.python.version }}"
+    
+  pre_tasks:
+           
+    - name: Python version
+      ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
+      register: python_ver
+      ignore_errors: true
+                 
+    - assert:
+        that:
+          - PYTHON_VERSION in python_ver.stdout                
+
+    - name: Configuration variables
+      ansible.builtin.debug:
+        msg:
+          - 'SSH instance port: {{ ansible_port }}'
+          - 'SSH instance user: {{ ansible_user }}'
+          - 'SSH instance key: {{ ansible_private_key_file }}'
+          - 'Python version: {{ PYTHON_VERSION }}'
+                                                          
+  tasks:
+
+    - name: Install Docker
+      yum:
+        name: "docker-{aws.instance.docker.version}"
+        state: present
+
+    - name: Enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install docker-compose
+      get_url:
+        url: "{aws.instance.docker.compose.download.url}"
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
+
+    - name: Create group docker
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Restart Docker
+      service:
+        name: docker
+        state: restarted 
+      
