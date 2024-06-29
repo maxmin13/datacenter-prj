@@ -34,19 +34,22 @@
   tasks:
 
     - name: Install Docker
+      become: true
       yum:
-        name: "docker-{aws.instance.docker.version}"
+        name: "docker"
         state: present
 
     - name: Enable Docker service
+      become: true
       service:
         name: docker
         state: started
         enabled: true
 
     - name: Install docker-compose
+      become: true
       get_url:
-        url: "{aws.instance.docker.compose.download.url}"
+        url: "{{aws.instance.docker.compose.download.url}}"
         dest: /usr/local/bin/docker-compose
         mode: 'u+x,g+x'
 
@@ -56,6 +59,7 @@
         state: present
 
     - name: Restart Docker
+      become: true
       service:
         name: docker
         state: restarted 

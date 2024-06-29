@@ -179,6 +179,8 @@ cd datacenter-prj/bin
 # Run a playbook by hand:
 ###################################
 
+# verify that the group_vars files are in place, otherwise copy them from the starting project.
+
 export AWS_ACCESS_KEY_ID=xxxxxx
 export AWS_SECRET_ACCESS_KEY=yyyyyy
 export AWS_DEFAULT_REGION=zzzzzz
