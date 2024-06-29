@@ -15,7 +15,12 @@ aws:
         url: "https://download.java.net/java/GA/jdk18.0.2.1/db379da656dc47308e138f21b33976fa/1/GPL/openjdk-18.0.2.1_linux-x64_bin.tar.gz"   
       root:
         dir: 
-          name: "jdk-18.0.2.1"                   
+          name: "jdk-18.0.2.1" 
+    docker:
+      version: "26.1"
+      compose:
+        download:
+          url: "https://github.com/docker/compose/releases/download/v2.11.2/docker-compose-Linux-x86_64"                  
     tomcat:
       version: "10.1.23"
       download:
