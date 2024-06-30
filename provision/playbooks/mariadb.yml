@@ -44,17 +44,6 @@
           - 'MariaDB version: {{ MARIADB_VERSION }}'
                                                           
   tasks:
-
-    - name: Install a list of packages
-      become: true
-      ansible.builtin.yum:
-        name:
-          - python3-devel
-          - mysql-devel
-      
-    - name: Install PyMySQL
-      become: true
-      pip: name=PyMySQL
    
     - name: Add Amazon linux extras MariaDB repository
       become: true

@@ -30,6 +30,8 @@
         name:
           - supervisor
           - git
-          - vim         
+          - vim       
+          - python3-devel
+          - mysql-devel            
         state: present
         

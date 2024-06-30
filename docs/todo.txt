@@ -1,37 +1,37 @@
 
+in all playbooks that run after python.yml, set:
+
+
+
+ ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python"
+ 
+ #########################################################################################
+
 
 mariadb.yml
+
+remove:
 
     - name: Install PyMySQL
       become: true
       pip: name=PyMySQL
       
-create a /opt/.venv
+use:
 
-upload and install a requirement files with PyMySQL
+ ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python"
 
-see what ansible module needs it and use the module specifying the .venv
-virtualenv: "{{ aws.instance.project.venv.dir.path }}"
-
-
-*********************************************************************************
-
-the same with phpmyadmin.yml
-
-community.docker.docker_container
-
-requests==2.31
-virtualenv: "{{ aws.instance.project.venv.dir.path }}"
 
 *********************************************************************************
 
 deploy-django.yml
 
+remove:
+
     - name: Install psycopg2 for ansible to be able to create postgresql users
       become: true
       pip: name=psycopg2-binary
       
-try to include the library in the project venv      
+ ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python"   
    
 *********************************************************************************   
       
