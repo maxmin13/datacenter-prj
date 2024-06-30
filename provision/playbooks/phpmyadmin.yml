@@ -9,7 +9,7 @@
     - variables/provision.yml
 
   vars:
-     ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"
+     ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python"
      PYTHON_VERSION: "{{ aws.instance.python.version }}"
      MARIADB_VERSION: "{{ aws.instance.mariadb.version }}"  
      DOCKER_VERSION: "{{ aws.instance.docker.version }}"  
