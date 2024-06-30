@@ -79,6 +79,22 @@ echo "Openssl ..."
 
 "${ANSIBLE_PLAYBOOK_CMD}" playbooks/openssl.yml 
 
+##################
+##### DOCKER #####
+##################
+
+echo "Docker ..."
+
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/docker.yml 
+
+##################
+### PHPMYADMIN ###
+##################
+
+echo "phpMyadmin ..."
+
+"${ANSIBLE_PLAYBOOK_CMD}" playbooks/phpmyadmin.yml 
+
 #################
 ##### PYTHON ####
 #################
