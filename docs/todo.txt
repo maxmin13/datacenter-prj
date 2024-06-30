@@ -8,7 +8,7 @@ in all playbooks that run after python.yml, set:
  #########################################################################################
 
 
-mariadb.yml
+mariadb.yml (DONE, test if it works)
 
 remove:
 
