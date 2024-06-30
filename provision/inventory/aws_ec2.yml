@@ -10,6 +10,8 @@ keyed_groups:
     prefix: webserver  
   - key: tags.common
     prefix: common    
+  - key: tags.utility
+    prefix: utility      
   - key: tags.jdk
     prefix: jdk                 
 filters:
