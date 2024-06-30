@@ -27,10 +27,10 @@
       vars:
         jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'  
           
-    - name: 'Test it! https://{{ instance_dns_domain }}:8443/'
+    - name: 'Test it! https://{{ instance_dns_domain }}:{{ HTTPS_PORT }}/'
       become: false
       ansible.builtin.uri:
-        url: 'https://{{ instance_dns_domain }}:8443/'
+        url: 'https://{{ instance_dns_domain }}:{{ HTTPS_PORT }}/'
         method: GET
         status_code: 200
         validate_certs: false

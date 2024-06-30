@@ -78,13 +78,6 @@
 						"Description": "Nginx HTTPS access"
 					},
 					{
-						"FromPort": 8444,
-						"ToPort": 8444,
-						"Protocol": "tcp",
-						"Cidr": "0.0.0.0/0",
-						"Description": "Tomcat HTTPS access"
-					},
-					{
 						"FromPort": 5432,
 						"ToPort": 5432,
 						"Protocol": "tcp",

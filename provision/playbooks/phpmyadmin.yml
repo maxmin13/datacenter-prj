@@ -16,15 +16,6 @@
     
   pre_tasks:
          
-    - name: Fetch MariaDB version
-      shell: mariadb --version 2>&1 | awk '{print $3}' | sed 's/"//g'
-      register: mariadb_version
-         
-    - name: End the play if MariaDB is installed
-      ansible.builtin.meta: end_play
-      when:
-        - (mariadb_version.stdout | int > 0) and (mariadb_version.stdout is version_compare(MARIADB_VERSION, '>='))  
-        
     - name: Python version
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
       register: python_ver
@@ -50,9 +41,13 @@
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
           - 'Python version: {{ PYTHON_VERSION }}'
-          - 'MariaDB version: {{ MARIADB_VERSION }}'
           - 'Docker version: {{ DOCKER_VERSION }}'
                                                           
   tasks:
+  
+    - name: Create a data container
+      community.docker.docker_container:
+        name: phpMyadmin
+        image: phpmyadmin  
 
     

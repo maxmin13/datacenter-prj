@@ -39,6 +39,7 @@
           - 'SSH instance user: {{ ansible_user }}'
           - 'SSH instance key: {{ ansible_private_key_file }}'
           - 'Python version: {{ PYTHON_VERSION }}'
+          - 'Docker version: {{ docker_version.stdout }}'
                                                           
   tasks:
 
@@ -62,7 +63,7 @@
         dest: /usr/local/bin/docker-compose
         mode: 'u+x,g+x'
 
-    - name: Create group docker
+    - name: Create group Docker
       ansible.builtin.group:
         name: docker
         state: present
