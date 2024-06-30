@@ -116,6 +116,7 @@
         password: "{{ mariadb_root_user_password }}"
         login_user: root
         login_password: "{{ mariadb_root_user_password }}"  
+        priv: '*.*:ALL,GRANT'
         host: "%"
       no_log: false
     

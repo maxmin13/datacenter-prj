@@ -15,6 +15,16 @@
      DOCKER_VERSION: "{{ aws.instance.docker.version }}"  
     
   pre_tasks:
+  
+    - name: Get datacenter.json content
+      set_fact:
+        datacenter_config: "{{ lookup('file', '{{ datacenter_dir }}/config/datacenter.json') | from_json }}"
+          
+    - name: Get instance DNS domain
+      set_fact:
+        instance_dns_domain: '{{ datacenter_config | json_query(jquery) }}'
+      vars:
+        jquery: 'Datacenter.Instances[?Name==''{{ instance_name }}''] | [0].DnsDomain'    
          
     - name: Python version
       ansible.builtin.shell: '{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -V'
@@ -49,5 +59,8 @@
       community.docker.docker_container:
         name: phpMyadmin
         image: phpmyadmin  
-
+        ports:
+          - "{{ aws.instance.phpmyadmin.http.port }}:80"
+        env:
+          PMA_HOST: "{{ instance_dns_domain }}"
     

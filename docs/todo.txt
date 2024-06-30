@@ -1,19 +1,37 @@
 
-############################################
-catch AWSDaoException in services
 
-############################
+mariadb.yml
 
-availability zone should be a parameter in the tests
+    - name: Install PyMySQL
+      become: true
+      pip: name=PyMySQL
+      
+create a /opt/.venv
 
-#############################
+upload and install a requirement files with PyMySQL
 
-in instancService replace import crypt 
-deprecated
-
-########################################
-
-datacenter.json take UserName and UserPassword
-move then in a vault
+see what ansible module needs it and use the module specifying the .venv
+virtualenv: "{{ aws.instance.project.venv.dir.path }}"
 
 
+*********************************************************************************
+
+the same with phpmyadmin.yml
+
+community.docker.docker_container
+
+requests==2.31
+virtualenv: "{{ aws.instance.project.venv.dir.path }}"
+
+*********************************************************************************
+
+deploy-django.yml
+
+    - name: Install psycopg2 for ansible to be able to create postgresql users
+      become: true
+      pip: name=psycopg2-binary
+      
+try to include the library in the project venv      
+   
+*********************************************************************************   
+      

@@ -2,6 +2,9 @@
 
 aws:
   instance: 
+    venv:
+      dir:
+        path: /opt/.venv
     download:
       dir:
         path: /opt/download  
@@ -76,4 +79,7 @@ aws:
       config:
          dir:
            path: "/etc/my.cnf.d" 
+    phpmyadmin:
+      http:
+        port: "8000"
 ...

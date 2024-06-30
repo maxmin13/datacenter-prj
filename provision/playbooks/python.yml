@@ -107,6 +107,35 @@
         that:
           - PYTHON_VERSION in python_ver.stdout
           
+    - name: Delete virtualenv directory
+      become: true
+      ansible.builtin.file:
+        path: "{{ aws.instance.venv.dir.path }}"
+        state: absent          
+   
+    - name: Create virtualenv
+      become: true
+      ansible.builtin.pip:
+        name:
+          - pip
+          - wheel
+          - setuptools
+        state: latest
+        virtualenv: "{{ aws.instance.venv.dir.path }}"
+        virtualenv_command: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }} -m venv"      
+
+    - name: Upload requirements
+      copy:
+        src: requirements.txt
+        dest: "{{ aws.instance.download.dir.path }}"
+        mode: '0644'
+
+    - name: Install required packages
+      become: true
+      ansible.builtin.pip:
+        virtualenv: "{{ aws.instance.venv.dir.path }}"
+        requirements: "{{ aws.instance.download.dir.path }}/requirements.txt"         
+          
   post_tasks:
   
     - name: Delete download directory
