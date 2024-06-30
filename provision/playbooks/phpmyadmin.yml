@@ -45,7 +45,7 @@
                                                           
   tasks:
   
-    - name: Create a data container
+    - name: Create a phpMyadmin container
       community.docker.docker_container:
         name: phpMyadmin
         image: phpmyadmin  

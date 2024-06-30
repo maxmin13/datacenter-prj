@@ -67,6 +67,13 @@
       ansible.builtin.group:
         name: docker
         state: present
+        
+    - name: adding user {{ ansible_user }} to group docker
+      bocome: true
+      user:
+        name: '{{ ansible_user }}'
+        groups: docker
+        append: true        
 
     - name: Restart Docker
       become: true
