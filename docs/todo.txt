@@ -8,20 +8,6 @@ in all playbooks that run after python.yml, set:
  #########################################################################################
 
 
-mariadb.yml (DONE, test if it works)
-
-remove:
-
-    - name: Install PyMySQL
-      become: true
-      pip: name=PyMySQL
-      
-use:
-
- ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python"
-
-
-*********************************************************************************
 
 deploy-django.yml
 

@@ -10,7 +10,7 @@
     - variables/provision.yml
     
   vars:
-    ansible_python_interpreter: "{{ aws.instance.python.install.dir.path }}/{{ aws.instance.python.executable }}"  
+    ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python"  
     PYTHON_VERSION: "{{ aws.instance.python.version }}"  
     
   pre_tasks:

@@ -10,6 +10,7 @@
     - variables/secrets.yml
 
   vars:
+     ansible_python_interpreter: "{{ aws.instance.venv.dir.path }}/bin/python" 
      PYTHON_VERSION: "{{ aws.instance.python.version }}"
      JAVA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.java.root.dir.name }}"  
      CATALINA_HOME: "{{ aws.instance.programs.install.dir.path }}/{{ aws.instance.tomcat.root.dir.name }}"
