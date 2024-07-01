@@ -68,8 +68,8 @@
         name: docker
         state: present
         
-    - name: "Adding user {{ ansible_user }} to group docker"
-      bocome: true
+    - name: Adding user "{{ ansible_user }}" to group docker
+      become: true
       user:
         name: '{{ ansible_user }}'
         groups: docker
