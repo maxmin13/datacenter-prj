@@ -162,7 +162,7 @@
       become: true
       become_method: sudo           
            
-    - name: Install Tomcat systemd service script
+    - name: Install Tomcat systemd service
       become: true
       become_method: sudo  
       ansible.builtin.template:
