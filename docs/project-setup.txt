@@ -187,6 +187,7 @@ export AWS_DEFAULT_REGION=zzzzzz
 # export any variable required in the actual group_vars file that is loaded by Ansible, ex:
 export DATACENTER_DIR=/home/vagrant/Downloads/datacenter-prj
 export BACKOFFICE_DIR=/home/vagrant/Downloads/backoffice-prj
+export MESSAGEBOARD_DIR=/home/vagrant/Downloads/messageboard-prj
 
 source .venv/bin/activate
 
