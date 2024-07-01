@@ -76,28 +76,25 @@ sudo chmod -R -x delete.sh
 ## Log into the remote AWS instance: ##
 
 ```
-// log into the remote instance, with your AWS user and the public IP assigned to the AWS instance, ex:
+// ssh into the remote instance, specifing the instance private key and the instance user:
 cd datacenter-prj/access
 
-rm -f ~/.ssh/known_hosts && ssh -v -i <instance private key, eg: admin-box> -p 22 <instance user, see datacenter.json, eg: dtcadmin>@176.34.196.38
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 dtcadmin@dtc.maxmin.it
 ```
 
 ## Access the Nginx page: ##
 
-*http://admin.maxmin.it:8080/index.html*
+*http://dtc.maxmin.it:8080/index.html*
 <br>
-*https://admin.maxmin.it:8443/index.html*
+*https://dtc.maxmin.it:8443/index.html*
 <br>
-*http://AWS-instance-public-IP-address:8080/index.html*
-<br>
-*https://AWS-instance-public-IP-address:8443/index.html*
 
 ## Connect to the PostgreSql server: ##
 
 ```
-// log into the remote instance, with your AWS user and the public IP assigned to the AWS instance, ex:
+// ssh into the remote instance, specifing the instance private key and the instance user:
 cd datacenter-prj/access
-rm -f ~/.ssh/known_hosts && ssh -v -i <instance private key, eg: admin-box> -p 22 <instance user, see datacenter.json, eg: dtcadmin>@176.34.196.38
+rm -f ~/.ssh/known_hosts && ssh -v -i admin-box -p 22 dtcadmin@dtc.maxmin.it
 
 // log into the PostgreSQL server
 sudo su postgres
